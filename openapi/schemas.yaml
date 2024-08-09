@@ -18,6 +18,9 @@ components:
         currency:
           type: "string"
           description: "Payment currency"
+        direction:
+          type: "string"
+          enum: ["inbound", "outbound"]
         customerId:
           type: "string"
           format: "uuid"

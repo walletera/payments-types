@@ -270,6 +270,39 @@ func (s *OptDateTime) UnmarshalJSON(data []byte) error {
 	return s.Decode(d, json.DecodeDateTime)
 }
 
+// Encode encodes PaymentDirection as json.
+func (o OptPaymentDirection) Encode(e *jx.Encoder) {
+	if !o.Set {
+		return
+	}
+	e.Str(string(o.Value))
+}
+
+// Decode decodes PaymentDirection from json.
+func (o *OptPaymentDirection) Decode(d *jx.Decoder) error {
+	if o == nil {
+		return errors.New("invalid: unable to decode OptPaymentDirection to nil")
+	}
+	o.Set = true
+	if err := o.Value.Decode(d); err != nil {
+		return err
+	}
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s OptPaymentDirection) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *OptPaymentDirection) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
 // Encode encodes PaymentStatus as json.
 func (o OptPaymentStatus) Encode(e *jx.Encoder) {
 	if !o.Set {
@@ -395,6 +428,12 @@ func (s *Payment) encodeFields(e *jx.Encoder) {
 		e.Str(s.Currency)
 	}
 	{
+		if s.Direction.Set {
+			e.FieldStart("direction")
+			s.Direction.Encode(e)
+		}
+	}
+	{
 		if s.CustomerId.Set {
 			e.FieldStart("customerId")
 			s.CustomerId.Encode(e)
@@ -438,17 +477,18 @@ func (s *Payment) encodeFields(e *jx.Encoder) {
 	}
 }
 
-var jsonFieldsNameOfPayment = [10]string{
-	0: "id",
-	1: "amount",
-	2: "currency",
-	3: "customerId",
-	4: "externalId",
-	5: "beneficiary",
-	6: "debtor",
-	7: "status",
-	8: "createdAt",
-	9: "updatedAt",
+var jsonFieldsNameOfPayment = [11]string{
+	0:  "id",
+	1:  "amount",
+	2:  "currency",
+	3:  "direction",
+	4:  "customerId",
+	5:  "externalId",
+	6:  "beneficiary",
+	7:  "debtor",
+	8:  "status",
+	9:  "createdAt",
+	10: "updatedAt",
 }
 
 // Decode decodes Payment from json.
@@ -495,6 +535,16 @@ func (s *Payment) Decode(d *jx.Decoder) error {
 				return nil
 			}(); err != nil {
 				return errors.Wrap(err, "decode field \"currency\"")
+			}
+		case "direction":
+			if err := func() error {
+				s.Direction.Reset()
+				if err := s.Direction.Decode(d); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return errors.Wrap(err, "decode field \"direction\"")
 			}
 		case "customerId":
 			if err := func() error {
@@ -619,6 +669,46 @@ func (s *Payment) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON implements stdjson.Unmarshaler.
 func (s *Payment) UnmarshalJSON(data []byte) error {
+	d := jx.DecodeBytes(data)
+	return s.Decode(d)
+}
+
+// Encode encodes PaymentDirection as json.
+func (s PaymentDirection) Encode(e *jx.Encoder) {
+	e.Str(string(s))
+}
+
+// Decode decodes PaymentDirection from json.
+func (s *PaymentDirection) Decode(d *jx.Decoder) error {
+	if s == nil {
+		return errors.New("invalid: unable to decode PaymentDirection to nil")
+	}
+	v, err := d.StrBytes()
+	if err != nil {
+		return err
+	}
+	// Try to use constant string.
+	switch PaymentDirection(v) {
+	case PaymentDirectionInbound:
+		*s = PaymentDirectionInbound
+	case PaymentDirectionOutbound:
+		*s = PaymentDirectionOutbound
+	default:
+		*s = PaymentDirection(v)
+	}
+
+	return nil
+}
+
+// MarshalJSON implements stdjson.Marshaler.
+func (s PaymentDirection) MarshalJSON() ([]byte, error) {
+	e := jx.Encoder{}
+	s.Encode(&e)
+	return e.Bytes(), nil
+}
+
+// UnmarshalJSON implements stdjson.Unmarshaler.
+func (s *PaymentDirection) UnmarshalJSON(data []byte) error {
 	d := jx.DecodeBytes(data)
 	return s.Decode(d)
 }

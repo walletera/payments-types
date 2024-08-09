@@ -176,6 +176,52 @@ func (o OptDateTime) Or(d time.Time) time.Time {
 	return d
 }
 
+// NewOptPaymentDirection returns new OptPaymentDirection with value set to v.
+func NewOptPaymentDirection(v PaymentDirection) OptPaymentDirection {
+	return OptPaymentDirection{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptPaymentDirection is optional PaymentDirection.
+type OptPaymentDirection struct {
+	Value PaymentDirection
+	Set   bool
+}
+
+// IsSet returns true if OptPaymentDirection was set.
+func (o OptPaymentDirection) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptPaymentDirection) Reset() {
+	var v PaymentDirection
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptPaymentDirection) SetTo(v PaymentDirection) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptPaymentDirection) Get() (v PaymentDirection, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptPaymentDirection) Or(d PaymentDirection) PaymentDirection {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
+}
+
 // NewOptPaymentStatus returns new OptPaymentStatus with value set to v.
 func NewOptPaymentStatus(v PaymentStatus) OptPaymentStatus {
 	return OptPaymentStatus{
@@ -327,7 +373,8 @@ type Payment struct {
 	// Payment amount.
 	Amount float64 `json:"amount"`
 	// Payment currency.
-	Currency string `json:"currency"`
+	Currency  string              `json:"currency"`
+	Direction OptPaymentDirection `json:"direction"`
 	// The customer that sent or received the payment.
 	CustomerId OptUUID `json:"customerId"`
 	// Id assigned to the operation by an external payment provider.
@@ -352,6 +399,11 @@ func (s *Payment) GetAmount() float64 {
 // GetCurrency returns the value of Currency.
 func (s *Payment) GetCurrency() string {
 	return s.Currency
+}
+
+// GetDirection returns the value of Direction.
+func (s *Payment) GetDirection() OptPaymentDirection {
+	return s.Direction
 }
 
 // GetCustomerId returns the value of CustomerId.
@@ -404,6 +456,11 @@ func (s *Payment) SetCurrency(val string) {
 	s.Currency = val
 }
 
+// SetDirection sets the value of Direction.
+func (s *Payment) SetDirection(val OptPaymentDirection) {
+	s.Direction = val
+}
+
 // SetCustomerId sets the value of CustomerId.
 func (s *Payment) SetCustomerId(val OptUUID) {
 	s.CustomerId = val
@@ -440,6 +497,47 @@ func (s *Payment) SetUpdatedAt(val OptDateTime) {
 }
 
 func (*Payment) patchPaymentRes() {}
+
+type PaymentDirection string
+
+const (
+	PaymentDirectionInbound  PaymentDirection = "inbound"
+	PaymentDirectionOutbound PaymentDirection = "outbound"
+)
+
+// AllValues returns all PaymentDirection values.
+func (PaymentDirection) AllValues() []PaymentDirection {
+	return []PaymentDirection{
+		PaymentDirectionInbound,
+		PaymentDirectionOutbound,
+	}
+}
+
+// MarshalText implements encoding.TextMarshaler.
+func (s PaymentDirection) MarshalText() ([]byte, error) {
+	switch s {
+	case PaymentDirectionInbound:
+		return []byte(s), nil
+	case PaymentDirectionOutbound:
+		return []byte(s), nil
+	default:
+		return nil, errors.Errorf("invalid value: %q", s)
+	}
+}
+
+// UnmarshalText implements encoding.TextUnmarshaler.
+func (s *PaymentDirection) UnmarshalText(data []byte) error {
+	switch PaymentDirection(data) {
+	case PaymentDirectionInbound:
+		*s = PaymentDirectionInbound
+		return nil
+	case PaymentDirectionOutbound:
+		*s = PaymentDirectionOutbound
+		return nil
+	default:
+		return errors.Errorf("invalid value: %q", data)
+	}
+}
 
 // Body of the PATH /withdrawal request.
 // Ref: #/components/schemas/paymentPatchBody
