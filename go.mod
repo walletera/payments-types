@@ -8,7 +8,7 @@ require (
 	github.com/google/uuid v1.6.0
 	github.com/ogen-go/ogen v1.2.2
 	github.com/stretchr/testify v1.9.0
-	github.com/walletera/payments v0.0.3
+	github.com/walletera/message-processor v0.0.7
 	go.opentelemetry.io/otel v1.27.0
 	go.opentelemetry.io/otel/metric v1.27.0
 	go.opentelemetry.io/otel/trace v1.27.0
@@ -36,4 +36,8 @@ require (
 	golang.org/x/text v0.16.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
+)
+
+replace (
+	github.com/walletera/message-processor => /home/fedev/Code/walletera/message-processor
 )
