@@ -1,0 +1,88 @@
+openapi: "3.0.0"
+
+components:
+  schemas:
+
+    payment:
+      type: "object"
+      description: "Payment type"
+      properties:
+        id:
+          type: "string"
+          format: "uuid"
+          description: "Payment id"
+        amount:
+          type: "number"
+          format: "double"
+          description: "Payment amount"
+        currency:
+          type: "string"
+          description: "Payment currency"
+        customerId:
+          type: "string"
+          format: "uuid"
+          description: "The customer that sent or received the payment"
+        externalId:
+          type: "string"
+          format: "uuid"
+          description: "Id assigned to the operation by an external payment provider"
+        beneficiary:
+          type: "object"
+          $ref: "#/components/schemas/accountDetails"
+        debtor:
+          type: "object"
+          $ref: "#/components/schemas/accountDetails"
+        status:
+          type: "string"
+          enum: [ "pending", "delivered", "confirmed", "failed" ]
+        createdAt:
+          type: "string"
+          format: "date-time"
+        updatedAt:
+          type: "string"
+          format: "date-time"
+      required:
+        - "id"
+        - "amount"
+        - "currency"
+
+    accountDetails:
+      type: "object"
+      description: "bank account details"
+      properties:
+        bankName:
+          type: string
+        bankId:
+          type: string
+        accountHolder:
+          type: string
+        accountNumber:
+          type: string
+        accountNumberType:
+          type: string
+        routingKey:
+          type: string
+
+    paymentPatchBody:
+      type: "object"
+      description: "Body of the PATH /withdrawal request"
+      properties:
+        externalId:
+          type: "string"
+          format: "uuid"
+          description: "Id assigned to the operation by the external payment provider"
+        status:
+          type: "string"
+          enum:
+            - "pending"
+            - "confirmed"
+            - "rejected"
+          description: "Withdrawal status"
+      required:
+        - "external"
+        - "status"
+
+    errorMessage:
+      type: "string"
+      maxLength: 256
+      description: "A text message describing an error"

@@ -1,0 +1,53 @@
+openapi: "3.0.0"
+info:
+  title: "Payments API"
+  description: "API to create withdrawals and deposits on the payments service"
+  version: "1.0.0"
+paths:
+  /payments/{paymentId}:
+    patch:
+      summary: "Patches an outbound payment"
+      operationId: "patchPayment"
+      parameters:
+        - name: "paymentId"
+          description: "Payment Id"
+          in: "path"
+          required: true
+          schema:
+            type: "string"
+            format: "uuid"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "schemas.yaml#/components/schemas/paymentPatchBody"
+      responses:
+        "200":
+          description: "Payment successfully updated"
+        "400":
+          description: "The provided parameters are incorrect"
+          content:
+            application/json:
+              schema:
+                $ref: "schemas.yaml#/components/schemas/payment"
+
+  /payments:
+    post:
+      summary: "Creates a payment"
+      operationId: "postPayment"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "schemas.yaml#/components/schemas/payment"
+      responses:
+        "201":
+          description: "Payment successfully created"
+        "400":
+          description: "The provided parameters are incorrect"
+          content:
+            application/json:
+              schema:
+                $ref: "schemas.yaml#/components/schemas/errorMessage"
