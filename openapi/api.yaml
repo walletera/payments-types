@@ -9,9 +9,16 @@ paths:
       summary: "Patches an outbound payment"
       operationId: "patchPayment"
       parameters:
+        - name: "X-Walletera-Correlation-Id"
+          in: "header"
+          description: "a UUID that allows to trace end-to-end transactions"
+          required: false
+          schema:
+            type: string
+            format: "uuid"
         - name: "paymentId"
-          description: "Payment Id"
           in: "path"
+          description: "Payment Id"
           required: true
           schema:
             type: "string"
@@ -21,7 +28,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "schemas.yaml#/components/schemas/paymentPatchBody"
+              $ref: "schemas.yaml#/components/schemas/paymentUpdate"
       responses:
         "200":
           description: "Payment successfully updated"
@@ -36,6 +43,14 @@ paths:
     post:
       summary: "Creates a payment"
       operationId: "postPayment"
+      parameters:
+        - name: "X-Walletera-Correlation-Id"
+          in: "header"
+          description: "a UUID that allows to trace end-to-end transactions"
+          required: false
+          schema:
+            type: string
+            format: "uuid"
       requestBody:
         required: true
         content:
@@ -51,3 +66,5 @@ paths:
             application/json:
               schema:
                 $ref: "schemas.yaml#/components/schemas/errorMessage"
+        "500":
+          description: "Internal error"

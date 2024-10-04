@@ -369,7 +369,7 @@ func (*PatchPaymentOK) patchPaymentRes() {}
 // Ref: #/components/schemas/payment
 type Payment struct {
 	// Payment id.
-	ID uuid.UUID `json:"id"`
+	ID OptUUID `json:"id"`
 	// Payment amount.
 	Amount float64 `json:"amount"`
 	// Payment currency.
@@ -387,7 +387,7 @@ type Payment struct {
 }
 
 // GetID returns the value of ID.
-func (s *Payment) GetID() uuid.UUID {
+func (s *Payment) GetID() OptUUID {
 	return s.ID
 }
 
@@ -442,7 +442,7 @@ func (s *Payment) GetUpdatedAt() OptDateTime {
 }
 
 // SetID sets the value of ID.
-func (s *Payment) SetID(val uuid.UUID) {
+func (s *Payment) SetID(val OptUUID) {
 	s.ID = val
 }
 
@@ -539,84 +539,7 @@ func (s *PaymentDirection) UnmarshalText(data []byte) error {
 	}
 }
 
-// Body of the PATH /withdrawal request.
-// Ref: #/components/schemas/paymentPatchBody
-type PaymentPatchBody struct {
-	// Id assigned to the operation by the external payment provider.
-	ExternalId OptUUID `json:"externalId"`
-	// Withdrawal status.
-	Status PaymentPatchBodyStatus `json:"status"`
-}
-
-// GetExternalId returns the value of ExternalId.
-func (s *PaymentPatchBody) GetExternalId() OptUUID {
-	return s.ExternalId
-}
-
-// GetStatus returns the value of Status.
-func (s *PaymentPatchBody) GetStatus() PaymentPatchBodyStatus {
-	return s.Status
-}
-
-// SetExternalId sets the value of ExternalId.
-func (s *PaymentPatchBody) SetExternalId(val OptUUID) {
-	s.ExternalId = val
-}
-
-// SetStatus sets the value of Status.
-func (s *PaymentPatchBody) SetStatus(val PaymentPatchBodyStatus) {
-	s.Status = val
-}
-
-// Withdrawal status.
-type PaymentPatchBodyStatus string
-
-const (
-	PaymentPatchBodyStatusPending   PaymentPatchBodyStatus = "pending"
-	PaymentPatchBodyStatusConfirmed PaymentPatchBodyStatus = "confirmed"
-	PaymentPatchBodyStatusRejected  PaymentPatchBodyStatus = "rejected"
-)
-
-// AllValues returns all PaymentPatchBodyStatus values.
-func (PaymentPatchBodyStatus) AllValues() []PaymentPatchBodyStatus {
-	return []PaymentPatchBodyStatus{
-		PaymentPatchBodyStatusPending,
-		PaymentPatchBodyStatusConfirmed,
-		PaymentPatchBodyStatusRejected,
-	}
-}
-
-// MarshalText implements encoding.TextMarshaler.
-func (s PaymentPatchBodyStatus) MarshalText() ([]byte, error) {
-	switch s {
-	case PaymentPatchBodyStatusPending:
-		return []byte(s), nil
-	case PaymentPatchBodyStatusConfirmed:
-		return []byte(s), nil
-	case PaymentPatchBodyStatusRejected:
-		return []byte(s), nil
-	default:
-		return nil, errors.Errorf("invalid value: %q", s)
-	}
-}
-
-// UnmarshalText implements encoding.TextUnmarshaler.
-func (s *PaymentPatchBodyStatus) UnmarshalText(data []byte) error {
-	switch PaymentPatchBodyStatus(data) {
-	case PaymentPatchBodyStatusPending:
-		*s = PaymentPatchBodyStatusPending
-		return nil
-	case PaymentPatchBodyStatusConfirmed:
-		*s = PaymentPatchBodyStatusConfirmed
-		return nil
-	case PaymentPatchBodyStatusRejected:
-		*s = PaymentPatchBodyStatusRejected
-		return nil
-	default:
-		return errors.Errorf("invalid value: %q", data)
-	}
-}
-
+// Ref: #/components/schemas/paymentStatus
 type PaymentStatus string
 
 const (
@@ -672,7 +595,53 @@ func (s *PaymentStatus) UnmarshalText(data []byte) error {
 	}
 }
 
+// Body of the PATH /withdrawal request.
+// Ref: #/components/schemas/paymentUpdate
+type PaymentUpdate struct {
+	// Payment Id.
+	PaymentId uuid.UUID `json:"paymentId"`
+	// Id assigned to the operation by the external payment provider.
+	ExternalId OptUUID `json:"externalId"`
+	// Payment status.
+	Status PaymentStatus `json:"status"`
+}
+
+// GetPaymentId returns the value of PaymentId.
+func (s *PaymentUpdate) GetPaymentId() uuid.UUID {
+	return s.PaymentId
+}
+
+// GetExternalId returns the value of ExternalId.
+func (s *PaymentUpdate) GetExternalId() OptUUID {
+	return s.ExternalId
+}
+
+// GetStatus returns the value of Status.
+func (s *PaymentUpdate) GetStatus() PaymentStatus {
+	return s.Status
+}
+
+// SetPaymentId sets the value of PaymentId.
+func (s *PaymentUpdate) SetPaymentId(val uuid.UUID) {
+	s.PaymentId = val
+}
+
+// SetExternalId sets the value of ExternalId.
+func (s *PaymentUpdate) SetExternalId(val OptUUID) {
+	s.ExternalId = val
+}
+
+// SetStatus sets the value of Status.
+func (s *PaymentUpdate) SetStatus(val PaymentStatus) {
+	s.Status = val
+}
+
 // PostPaymentCreated is response for PostPayment operation.
 type PostPaymentCreated struct{}
 
 func (*PostPaymentCreated) postPaymentRes() {}
+
+// PostPaymentInternalServerError is response for PostPayment operation.
+type PostPaymentInternalServerError struct{}
+
+func (*PostPaymentInternalServerError) postPaymentRes() {}

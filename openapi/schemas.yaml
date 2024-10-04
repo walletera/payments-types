@@ -37,7 +37,7 @@ components:
           $ref: "#/components/schemas/accountDetails"
         status:
           type: "string"
-          enum: [ "pending", "delivered", "confirmed", "failed" ]
+          $ref: "#/components/schemas/paymentStatus"
         createdAt:
           type: "string"
           format: "date-time"
@@ -45,7 +45,6 @@ components:
           type: "string"
           format: "date-time"
       required:
-        - "id"
         - "amount"
         - "currency"
 
@@ -66,24 +65,29 @@ components:
         routingKey:
           type: string
 
-    paymentPatchBody:
+    paymentUpdate:
       type: "object"
       description: "Body of the PATH /withdrawal request"
       properties:
+        paymentId:
+          type: "string"
+          format: "uuid"
+          description: "Payment Id"
         externalId:
           type: "string"
           format: "uuid"
           description: "Id assigned to the operation by the external payment provider"
         status:
           type: "string"
-          enum:
-            - "pending"
-            - "confirmed"
-            - "rejected"
-          description: "Withdrawal status"
+          $ref: "#/components/schemas/paymentStatus"
+          description: "Payment status"
       required:
-        - "external"
+        - "paymentId"
         - "status"
+
+    paymentStatus:
+      type: string
+      enum: [ "pending", "delivered", "confirmed", "failed" ]
 
     errorMessage:
       type: "string"

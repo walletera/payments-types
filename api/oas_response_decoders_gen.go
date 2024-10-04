@@ -116,6 +116,9 @@ func decodePostPaymentResponse(resp *http.Response) (res PostPaymentRes, _ error
 		default:
 			return res, validate.InvalidContentType(ct)
 		}
+	case 500:
+		// Code 500.
+		return &PostPaymentInternalServerError{}, nil
 	}
 	return res, validate.UnexpectedStatusCode(resp.StatusCode)
 }

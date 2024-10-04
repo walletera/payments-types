@@ -18,7 +18,7 @@ var _ Handler = UnimplementedHandler{}
 // Patches an outbound payment.
 //
 // PATCH /payments/{paymentId}
-func (UnimplementedHandler) PatchPayment(ctx context.Context, req *PaymentPatchBody, params PatchPaymentParams) (r PatchPaymentRes, _ error) {
+func (UnimplementedHandler) PatchPayment(ctx context.Context, req *PaymentUpdate, params PatchPaymentParams) (r PatchPaymentRes, _ error) {
 	return r, ht.ErrNotImplemented
 }
 
@@ -27,6 +27,6 @@ func (UnimplementedHandler) PatchPayment(ctx context.Context, req *PaymentPatchB
 // Creates a payment.
 //
 // POST /payments
-func (UnimplementedHandler) PostPayment(ctx context.Context, req *Payment) (r PostPaymentRes, _ error) {
+func (UnimplementedHandler) PostPayment(ctx context.Context, req *Payment, params PostPaymentParams) (r PostPaymentRes, _ error) {
 	return r, ht.ErrNotImplemented
 }

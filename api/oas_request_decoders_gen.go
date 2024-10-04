@@ -16,7 +16,7 @@ import (
 )
 
 func (s *Server) decodePatchPaymentRequest(r *http.Request) (
-	req *PaymentPatchBody,
+	req *PaymentUpdate,
 	close func() error,
 	rerr error,
 ) {
@@ -55,7 +55,7 @@ func (s *Server) decodePatchPaymentRequest(r *http.Request) (
 
 		d := jx.DecodeBytes(buf)
 
-		var request PaymentPatchBody
+		var request PaymentUpdate
 		if err := func() error {
 			if err := request.Decode(d); err != nil {
 				return err

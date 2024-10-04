@@ -12,7 +12,7 @@ import (
 )
 
 func encodePatchPaymentRequest(
-	req *PaymentPatchBody,
+	req *PaymentUpdate,
 	r *http.Request,
 ) error {
 	const contentType = "application/json"

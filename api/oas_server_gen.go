@@ -13,13 +13,13 @@ type Handler interface {
 	// Patches an outbound payment.
 	//
 	// PATCH /payments/{paymentId}
-	PatchPayment(ctx context.Context, req *PaymentPatchBody, params PatchPaymentParams) (PatchPaymentRes, error)
+	PatchPayment(ctx context.Context, req *PaymentUpdate, params PatchPaymentParams) (PatchPaymentRes, error)
 	// PostPayment implements postPayment operation.
 	//
 	// Creates a payment.
 	//
 	// POST /payments
-	PostPayment(ctx context.Context, req *Payment) (PostPaymentRes, error)
+	PostPayment(ctx context.Context, req *Payment, params PostPaymentParams) (PostPaymentRes, error)
 }
 
 // Server implements http server based on OpenAPI v3 specification and

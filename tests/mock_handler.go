@@ -24,7 +24,7 @@ func (_m *MockHandler) EXPECT() *MockHandler_Expecter {
 }
 
 // PatchPayment provides a mock function with given fields: ctx, req, params
-func (_m *MockHandler) PatchPayment(ctx context.Context, req *api.PaymentPatchBody, params api.PatchPaymentParams) (api.PatchPaymentRes, error) {
+func (_m *MockHandler) PatchPayment(ctx context.Context, req *api.PaymentUpdate, params api.PatchPaymentParams) (api.PatchPaymentRes, error) {
 	ret := _m.Called(ctx, req, params)
 
 	if len(ret) == 0 {
@@ -33,10 +33,10 @@ func (_m *MockHandler) PatchPayment(ctx context.Context, req *api.PaymentPatchBo
 
 	var r0 api.PatchPaymentRes
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, *api.PaymentPatchBody, api.PatchPaymentParams) (api.PatchPaymentRes, error)); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, *api.PaymentUpdate, api.PatchPaymentParams) (api.PatchPaymentRes, error)); ok {
 		return rf(ctx, req, params)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, *api.PaymentPatchBody, api.PatchPaymentParams) api.PatchPaymentRes); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, *api.PaymentUpdate, api.PatchPaymentParams) api.PatchPaymentRes); ok {
 		r0 = rf(ctx, req, params)
 	} else {
 		if ret.Get(0) != nil {
@@ -44,7 +44,7 @@ func (_m *MockHandler) PatchPayment(ctx context.Context, req *api.PaymentPatchBo
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func(context.Context, *api.PaymentPatchBody, api.PatchPaymentParams) error); ok {
+	if rf, ok := ret.Get(1).(func(context.Context, *api.PaymentUpdate, api.PatchPaymentParams) error); ok {
 		r1 = rf(ctx, req, params)
 	} else {
 		r1 = ret.Error(1)
@@ -60,15 +60,15 @@ type MockHandler_PatchPayment_Call struct {
 
 // PatchPayment is a helper method to define mock.On call
 //   - ctx context.Context
-//   - req *api.PaymentPatchBody
+//   - req *api.PaymentUpdate
 //   - params api.PatchPaymentParams
 func (_e *MockHandler_Expecter) PatchPayment(ctx interface{}, req interface{}, params interface{}) *MockHandler_PatchPayment_Call {
 	return &MockHandler_PatchPayment_Call{Call: _e.mock.On("PatchPayment", ctx, req, params)}
 }
 
-func (_c *MockHandler_PatchPayment_Call) Run(run func(ctx context.Context, req *api.PaymentPatchBody, params api.PatchPaymentParams)) *MockHandler_PatchPayment_Call {
+func (_c *MockHandler_PatchPayment_Call) Run(run func(ctx context.Context, req *api.PaymentUpdate, params api.PatchPaymentParams)) *MockHandler_PatchPayment_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(*api.PaymentPatchBody), args[2].(api.PatchPaymentParams))
+		run(args[0].(context.Context), args[1].(*api.PaymentUpdate), args[2].(api.PatchPaymentParams))
 	})
 	return _c
 }
@@ -78,14 +78,14 @@ func (_c *MockHandler_PatchPayment_Call) Return(_a0 api.PatchPaymentRes, _a1 err
 	return _c
 }
 
-func (_c *MockHandler_PatchPayment_Call) RunAndReturn(run func(context.Context, *api.PaymentPatchBody, api.PatchPaymentParams) (api.PatchPaymentRes, error)) *MockHandler_PatchPayment_Call {
+func (_c *MockHandler_PatchPayment_Call) RunAndReturn(run func(context.Context, *api.PaymentUpdate, api.PatchPaymentParams) (api.PatchPaymentRes, error)) *MockHandler_PatchPayment_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
-// PostPayment provides a mock function with given fields: ctx, req
-func (_m *MockHandler) PostPayment(ctx context.Context, req *api.Payment) (api.PostPaymentRes, error) {
-	ret := _m.Called(ctx, req)
+// PostPayment provides a mock function with given fields: ctx, req, params
+func (_m *MockHandler) PostPayment(ctx context.Context, req *api.Payment, params api.PostPaymentParams) (api.PostPaymentRes, error) {
+	ret := _m.Called(ctx, req, params)
 
 	if len(ret) == 0 {
 		panic("no return value specified for PostPayment")
@@ -93,19 +93,19 @@ func (_m *MockHandler) PostPayment(ctx context.Context, req *api.Payment) (api.P
 
 	var r0 api.PostPaymentRes
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, *api.Payment) (api.PostPaymentRes, error)); ok {
-		return rf(ctx, req)
+	if rf, ok := ret.Get(0).(func(context.Context, *api.Payment, api.PostPaymentParams) (api.PostPaymentRes, error)); ok {
+		return rf(ctx, req, params)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, *api.Payment) api.PostPaymentRes); ok {
-		r0 = rf(ctx, req)
+	if rf, ok := ret.Get(0).(func(context.Context, *api.Payment, api.PostPaymentParams) api.PostPaymentRes); ok {
+		r0 = rf(ctx, req, params)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(api.PostPaymentRes)
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func(context.Context, *api.Payment) error); ok {
-		r1 = rf(ctx, req)
+	if rf, ok := ret.Get(1).(func(context.Context, *api.Payment, api.PostPaymentParams) error); ok {
+		r1 = rf(ctx, req, params)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -121,13 +121,14 @@ type MockHandler_PostPayment_Call struct {
 // PostPayment is a helper method to define mock.On call
 //   - ctx context.Context
 //   - req *api.Payment
-func (_e *MockHandler_Expecter) PostPayment(ctx interface{}, req interface{}) *MockHandler_PostPayment_Call {
-	return &MockHandler_PostPayment_Call{Call: _e.mock.On("PostPayment", ctx, req)}
+//   - params api.PostPaymentParams
+func (_e *MockHandler_Expecter) PostPayment(ctx interface{}, req interface{}, params interface{}) *MockHandler_PostPayment_Call {
+	return &MockHandler_PostPayment_Call{Call: _e.mock.On("PostPayment", ctx, req, params)}
 }
 
-func (_c *MockHandler_PostPayment_Call) Run(run func(ctx context.Context, req *api.Payment)) *MockHandler_PostPayment_Call {
+func (_c *MockHandler_PostPayment_Call) Run(run func(ctx context.Context, req *api.Payment, params api.PostPaymentParams)) *MockHandler_PostPayment_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(*api.Payment))
+		run(args[0].(context.Context), args[1].(*api.Payment), args[2].(api.PostPaymentParams))
 	})
 	return _c
 }
@@ -137,7 +138,7 @@ func (_c *MockHandler_PostPayment_Call) Return(_a0 api.PostPaymentRes, _a1 error
 	return _c
 }
 
-func (_c *MockHandler_PostPayment_Call) RunAndReturn(run func(context.Context, *api.Payment) (api.PostPaymentRes, error)) *MockHandler_PostPayment_Call {
+func (_c *MockHandler_PostPayment_Call) RunAndReturn(run func(context.Context, *api.Payment, api.PostPaymentParams) (api.PostPaymentRes, error)) *MockHandler_PostPayment_Call {
 	_c.Call.Return(run)
 	return _c
 }

@@ -12,7 +12,7 @@ import (
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/codes"
 	"go.opentelemetry.io/otel/metric"
-	semconv "go.opentelemetry.io/otel/semconv/v1.19.0"
+	semconv "go.opentelemetry.io/otel/semconv/v1.26.0"
 	"go.opentelemetry.io/otel/trace"
 
 	"github.com/ogen-go/ogen/conv"
@@ -28,13 +28,13 @@ type Invoker interface {
 	// Patches an outbound payment.
 	//
 	// PATCH /payments/{paymentId}
-	PatchPayment(ctx context.Context, request *PaymentPatchBody, params PatchPaymentParams) (PatchPaymentRes, error)
+	PatchPayment(ctx context.Context, request *PaymentUpdate, params PatchPaymentParams) (PatchPaymentRes, error)
 	// PostPayment invokes postPayment operation.
 	//
 	// Creates a payment.
 	//
 	// POST /payments
-	PostPayment(ctx context.Context, request *Payment) (PostPaymentRes, error)
+	PostPayment(ctx context.Context, request *Payment, params PostPaymentParams) (PostPaymentRes, error)
 }
 
 // Client implements OAS client.
@@ -90,15 +90,15 @@ func (c *Client) requestURL(ctx context.Context) *url.URL {
 // Patches an outbound payment.
 //
 // PATCH /payments/{paymentId}
-func (c *Client) PatchPayment(ctx context.Context, request *PaymentPatchBody, params PatchPaymentParams) (PatchPaymentRes, error) {
+func (c *Client) PatchPayment(ctx context.Context, request *PaymentUpdate, params PatchPaymentParams) (PatchPaymentRes, error) {
 	res, err := c.sendPatchPayment(ctx, request, params)
 	return res, err
 }
 
-func (c *Client) sendPatchPayment(ctx context.Context, request *PaymentPatchBody, params PatchPaymentParams) (res PatchPaymentRes, err error) {
+func (c *Client) sendPatchPayment(ctx context.Context, request *PaymentUpdate, params PatchPaymentParams) (res PatchPaymentRes, err error) {
 	otelAttrs := []attribute.KeyValue{
 		otelogen.OperationID("patchPayment"),
-		semconv.HTTPMethodKey.String("PATCH"),
+		semconv.HTTPRequestMethodKey.String("PATCH"),
 		semconv.HTTPRouteKey.String("/payments/{paymentId}"),
 	}
 
@@ -162,6 +162,23 @@ func (c *Client) sendPatchPayment(ctx context.Context, request *PaymentPatchBody
 		return res, errors.Wrap(err, "encode request")
 	}
 
+	stage = "EncodeHeaderParams"
+	h := uri.NewHeaderEncoder(r.Header)
+	{
+		cfg := uri.HeaderParameterEncodingConfig{
+			Name:    "X-Walletera-Correlation-Id",
+			Explode: false,
+		}
+		if err := h.EncodeParam(cfg, func(e uri.Encoder) error {
+			if val, ok := params.XWalleteraCorrelationID.Get(); ok {
+				return e.EncodeValue(conv.UUIDToString(val))
+			}
+			return nil
+		}); err != nil {
+			return res, errors.Wrap(err, "encode header")
+		}
+	}
+
 	stage = "SendRequest"
 	resp, err := c.cfg.Client.Do(r)
 	if err != nil {
@@ -183,15 +200,15 @@ func (c *Client) sendPatchPayment(ctx context.Context, request *PaymentPatchBody
 // Creates a payment.
 //
 // POST /payments
-func (c *Client) PostPayment(ctx context.Context, request *Payment) (PostPaymentRes, error) {
-	res, err := c.sendPostPayment(ctx, request)
+func (c *Client) PostPayment(ctx context.Context, request *Payment, params PostPaymentParams) (PostPaymentRes, error) {
+	res, err := c.sendPostPayment(ctx, request, params)
 	return res, err
 }
 
-func (c *Client) sendPostPayment(ctx context.Context, request *Payment) (res PostPaymentRes, err error) {
+func (c *Client) sendPostPayment(ctx context.Context, request *Payment, params PostPaymentParams) (res PostPaymentRes, err error) {
 	otelAttrs := []attribute.KeyValue{
 		otelogen.OperationID("postPayment"),
-		semconv.HTTPMethodKey.String("POST"),
+		semconv.HTTPRequestMethodKey.String("POST"),
 		semconv.HTTPRouteKey.String("/payments"),
 	}
 
@@ -235,6 +252,23 @@ func (c *Client) sendPostPayment(ctx context.Context, request *Payment) (res Pos
 	}
 	if err := encodePostPaymentRequest(request, r); err != nil {
 		return res, errors.Wrap(err, "encode request")
+	}
+
+	stage = "EncodeHeaderParams"
+	h := uri.NewHeaderEncoder(r.Header)
+	{
+		cfg := uri.HeaderParameterEncodingConfig{
+			Name:    "X-Walletera-Correlation-Id",
+			Explode: false,
+		}
+		if err := h.EncodeParam(cfg, func(e uri.Encoder) error {
+			if val, ok := params.XWalleteraCorrelationID.Get(); ok {
+				return e.EncodeValue(conv.UUIDToString(val))
+			}
+			return nil
+		}); err != nil {
+			return res, errors.Wrap(err, "encode header")
+		}
 	}
 
 	stage = "SendRequest"

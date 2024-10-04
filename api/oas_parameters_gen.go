@@ -18,11 +18,22 @@ import (
 
 // PatchPaymentParams is parameters of patchPayment operation.
 type PatchPaymentParams struct {
+	// A UUID that allows to trace end-to-end transactions.
+	XWalleteraCorrelationID OptUUID
 	// Payment Id.
 	PaymentId uuid.UUID
 }
 
 func unpackPatchPaymentParams(packed middleware.Parameters) (params PatchPaymentParams) {
+	{
+		key := middleware.ParameterKey{
+			Name: "X-Walletera-Correlation-Id",
+			In:   "header",
+		}
+		if v, ok := packed[key]; ok {
+			params.XWalleteraCorrelationID = v.(OptUUID)
+		}
+	}
 	{
 		key := middleware.ParameterKey{
 			Name: "paymentId",
@@ -34,6 +45,46 @@ func unpackPatchPaymentParams(packed middleware.Parameters) (params PatchPayment
 }
 
 func decodePatchPaymentParams(args [1]string, argsEscaped bool, r *http.Request) (params PatchPaymentParams, _ error) {
+	h := uri.NewHeaderDecoder(r.Header)
+	// Decode header: X-Walletera-Correlation-Id.
+	if err := func() error {
+		cfg := uri.HeaderParameterDecodingConfig{
+			Name:    "X-Walletera-Correlation-Id",
+			Explode: false,
+		}
+		if err := h.HasParam(cfg); err == nil {
+			if err := h.DecodeParam(cfg, func(d uri.Decoder) error {
+				var paramsDotXWalleteraCorrelationIDVal uuid.UUID
+				if err := func() error {
+					val, err := d.DecodeValue()
+					if err != nil {
+						return err
+					}
+
+					c, err := conv.ToUUID(val)
+					if err != nil {
+						return err
+					}
+
+					paramsDotXWalleteraCorrelationIDVal = c
+					return nil
+				}(); err != nil {
+					return err
+				}
+				params.XWalleteraCorrelationID.SetTo(paramsDotXWalleteraCorrelationIDVal)
+				return nil
+			}); err != nil {
+				return err
+			}
+		}
+		return nil
+	}(); err != nil {
+		return params, &ogenerrors.DecodeParamError{
+			Name: "X-Walletera-Correlation-Id",
+			In:   "header",
+			Err:  err,
+		}
+	}
 	// Decode path: paymentId.
 	if err := func() error {
 		param := args[0]
@@ -76,6 +127,69 @@ func decodePatchPaymentParams(args [1]string, argsEscaped bool, r *http.Request)
 		return params, &ogenerrors.DecodeParamError{
 			Name: "paymentId",
 			In:   "path",
+			Err:  err,
+		}
+	}
+	return params, nil
+}
+
+// PostPaymentParams is parameters of postPayment operation.
+type PostPaymentParams struct {
+	// A UUID that allows to trace end-to-end transactions.
+	XWalleteraCorrelationID OptUUID
+}
+
+func unpackPostPaymentParams(packed middleware.Parameters) (params PostPaymentParams) {
+	{
+		key := middleware.ParameterKey{
+			Name: "X-Walletera-Correlation-Id",
+			In:   "header",
+		}
+		if v, ok := packed[key]; ok {
+			params.XWalleteraCorrelationID = v.(OptUUID)
+		}
+	}
+	return params
+}
+
+func decodePostPaymentParams(args [0]string, argsEscaped bool, r *http.Request) (params PostPaymentParams, _ error) {
+	h := uri.NewHeaderDecoder(r.Header)
+	// Decode header: X-Walletera-Correlation-Id.
+	if err := func() error {
+		cfg := uri.HeaderParameterDecodingConfig{
+			Name:    "X-Walletera-Correlation-Id",
+			Explode: false,
+		}
+		if err := h.HasParam(cfg); err == nil {
+			if err := h.DecodeParam(cfg, func(d uri.Decoder) error {
+				var paramsDotXWalleteraCorrelationIDVal uuid.UUID
+				if err := func() error {
+					val, err := d.DecodeValue()
+					if err != nil {
+						return err
+					}
+
+					c, err := conv.ToUUID(val)
+					if err != nil {
+						return err
+					}
+
+					paramsDotXWalleteraCorrelationIDVal = c
+					return nil
+				}(); err != nil {
+					return err
+				}
+				params.XWalleteraCorrelationID.SetTo(paramsDotXWalleteraCorrelationIDVal)
+				return nil
+			}); err != nil {
+				return err
+			}
+		}
+		return nil
+	}(); err != nil {
+		return params, &ogenerrors.DecodeParamError{
+			Name: "X-Walletera-Correlation-Id",
+			In:   "header",
 			Err:  err,
 		}
 	}

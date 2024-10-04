@@ -11,7 +11,7 @@ import (
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/codes"
 	"go.opentelemetry.io/otel/metric"
-	semconv "go.opentelemetry.io/otel/semconv/v1.19.0"
+	semconv "go.opentelemetry.io/otel/semconv/v1.26.0"
 	"go.opentelemetry.io/otel/trace"
 
 	ht "github.com/ogen-go/ogen/http"
@@ -28,7 +28,7 @@ import (
 func (s *Server) handlePatchPaymentRequest(args [1]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
 	otelAttrs := []attribute.KeyValue{
 		otelogen.OperationID("patchPayment"),
-		semconv.HTTPMethodKey.String("PATCH"),
+		semconv.HTTPRequestMethodKey.String("PATCH"),
 		semconv.HTTPRouteKey.String("/payments/{paymentId}"),
 	}
 
@@ -104,6 +104,10 @@ func (s *Server) handlePatchPaymentRequest(args [1]string, argsEscaped bool, w h
 			Body:             request,
 			Params: middleware.Parameters{
 				{
+					Name: "X-Walletera-Correlation-Id",
+					In:   "header",
+				}: params.XWalleteraCorrelationID,
+				{
 					Name: "paymentId",
 					In:   "path",
 				}: params.PaymentId,
@@ -112,7 +116,7 @@ func (s *Server) handlePatchPaymentRequest(args [1]string, argsEscaped bool, w h
 		}
 
 		type (
-			Request  = *PaymentPatchBody
+			Request  = *PaymentUpdate
 			Params   = PatchPaymentParams
 			Response = PatchPaymentRes
 		)
@@ -155,7 +159,7 @@ func (s *Server) handlePatchPaymentRequest(args [1]string, argsEscaped bool, w h
 func (s *Server) handlePostPaymentRequest(args [0]string, argsEscaped bool, w http.ResponseWriter, r *http.Request) {
 	otelAttrs := []attribute.KeyValue{
 		otelogen.OperationID("postPayment"),
-		semconv.HTTPMethodKey.String("POST"),
+		semconv.HTTPRequestMethodKey.String("POST"),
 		semconv.HTTPRouteKey.String("/payments"),
 	}
 
@@ -195,6 +199,16 @@ func (s *Server) handlePostPaymentRequest(args [0]string, argsEscaped bool, w ht
 			ID:   "postPayment",
 		}
 	)
+	params, err := decodePostPaymentParams(args, argsEscaped, r)
+	if err != nil {
+		err = &ogenerrors.DecodeParamsError{
+			OperationContext: opErrContext,
+			Err:              err,
+		}
+		defer recordError("DecodeParams", err)
+		s.cfg.ErrorHandler(ctx, w, r, err)
+		return
+	}
 	request, close, err := s.decodePostPaymentRequest(r)
 	if err != nil {
 		err = &ogenerrors.DecodeRequestError{
@@ -219,13 +233,18 @@ func (s *Server) handlePostPaymentRequest(args [0]string, argsEscaped bool, w ht
 			OperationSummary: "Creates a payment",
 			OperationID:      "postPayment",
 			Body:             request,
-			Params:           middleware.Parameters{},
-			Raw:              r,
+			Params: middleware.Parameters{
+				{
+					Name: "X-Walletera-Correlation-Id",
+					In:   "header",
+				}: params.XWalleteraCorrelationID,
+			},
+			Raw: r,
 		}
 
 		type (
 			Request  = *Payment
-			Params   = struct{}
+			Params   = PostPaymentParams
 			Response = PostPaymentRes
 		)
 		response, err = middleware.HookMiddleware[
@@ -235,14 +254,14 @@ func (s *Server) handlePostPaymentRequest(args [0]string, argsEscaped bool, w ht
 		](
 			m,
 			mreq,
-			nil,
+			unpackPostPaymentParams,
 			func(ctx context.Context, request Request, params Params) (response Response, err error) {
-				response, err = s.h.PostPayment(ctx, request)
+				response, err = s.h.PostPayment(ctx, request, params)
 				return response, err
 			},
 		)
 	} else {
-		response, err = s.h.PostPayment(ctx, request)
+		response, err = s.h.PostPayment(ctx, request, params)
 	}
 	if err != nil {
 		defer recordError("Internal", err)

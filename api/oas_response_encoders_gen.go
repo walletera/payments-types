@@ -58,6 +58,12 @@ func encodePostPaymentResponse(response PostPaymentRes, w http.ResponseWriter, s
 
 		return nil
 
+	case *PostPaymentInternalServerError:
+		w.WriteHeader(500)
+		span.SetStatus(codes.Error, http.StatusText(500))
+
+		return nil
+
 	default:
 		return errors.Errorf("unexpected response type: %T", response)
 	}

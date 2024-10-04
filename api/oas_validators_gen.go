@@ -94,7 +94,22 @@ func (s PaymentDirection) Validate() error {
 	}
 }
 
-func (s *PaymentPatchBody) Validate() error {
+func (s PaymentStatus) Validate() error {
+	switch s {
+	case "pending":
+		return nil
+	case "delivered":
+		return nil
+	case "confirmed":
+		return nil
+	case "failed":
+		return nil
+	default:
+		return errors.Errorf("invalid value: %v", s)
+	}
+}
+
+func (s *PaymentUpdate) Validate() error {
 	if s == nil {
 		return validate.ErrNilPointer
 	}
@@ -115,32 +130,4 @@ func (s *PaymentPatchBody) Validate() error {
 		return &validate.Error{Fields: failures}
 	}
 	return nil
-}
-
-func (s PaymentPatchBodyStatus) Validate() error {
-	switch s {
-	case "pending":
-		return nil
-	case "confirmed":
-		return nil
-	case "rejected":
-		return nil
-	default:
-		return errors.Errorf("invalid value: %v", s)
-	}
-}
-
-func (s PaymentStatus) Validate() error {
-	switch s {
-	case "pending":
-		return nil
-	case "delivered":
-		return nil
-	case "confirmed":
-		return nil
-	case "failed":
-		return nil
-	default:
-		return errors.Errorf("invalid value: %v", s)
-	}
 }

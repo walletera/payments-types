@@ -20,12 +20,12 @@ func TestClient_PatchWithdrawal(t *testing.T) {
     externalId, err := uuid.NewUUID()
     require.NoError(t, err)
 
-    paymentPatchBody := &api.PaymentPatchBody{
+    paymentPatchBody := &api.PaymentUpdate{
         ExternalId: api.OptUUID{
             Value: externalId,
             Set:   true,
         },
-        Status: api.PaymentPatchBodyStatusConfirmed,
+        Status: api.PaymentStatusConfirmed,
     }
 
     patchWithdrawalParams := api.PatchPaymentParams{
@@ -63,7 +63,7 @@ func TestClient_PostDeposit(t *testing.T) {
     require.NoError(t, err)
 
     payment := &api.Payment{
-        ID:       depositlId,
+        ID:       api.NewOptUUID(depositlId),
         Amount:   100,
         Currency: "usd",
         CustomerId: api.OptUUID{
@@ -76,8 +76,15 @@ func TestClient_PostDeposit(t *testing.T) {
         },
     }
 
+    correlationID, err := uuid.NewUUID()
+    require.NoError(t, err)
+
+    postParams := api.PostPaymentParams{
+        XWalleteraCorrelationID: api.NewOptUUID(correlationID),
+    }
+
     handlerMock.EXPECT().
-        PostPayment(mock.Anything, payment).
+        PostPayment(mock.Anything, payment, postParams).
         Return(&api.PostPaymentCreated{}, nil)
 
     paymentsServer, err := api.NewServer(handlerMock)
@@ -89,7 +96,7 @@ func TestClient_PostDeposit(t *testing.T) {
     paymentsClient, err := api.NewClient(ts.URL)
     require.NoError(t, err)
 
-    _, err = paymentsClient.PostPayment(context.Background(), payment)
+    _, err = paymentsClient.PostPayment(context.Background(), payment, postParams)
 
     require.NoError(t, err)
 }
