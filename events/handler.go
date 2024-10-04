@@ -1,4 +1,4 @@
-package payments
+package events
 
 import (
     "context"
@@ -6,6 +6,7 @@ import (
     "github.com/walletera/message-processor/errors"
 )
 
-type EventsHandler interface {
+type Handler interface {
     HandlePaymentCreated(ctx context.Context, paymentCreatedEvent PaymentCreated) errors.ProcessingError
+    HandlePaymentUpdated(ctx context.Context, paymentCreatedEvent PaymentUpdated) errors.ProcessingError
 }
