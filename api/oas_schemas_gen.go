@@ -84,6 +84,11 @@ type ErrorMessage string
 
 func (*ErrorMessage) postPaymentRes() {}
 
+// GetPaymentNotFound is response for GetPayment operation.
+type GetPaymentNotFound struct{}
+
+func (*GetPaymentNotFound) getPaymentRes() {}
+
 // NewOptAccountDetails returns new OptAccountDetails with value set to v.
 func NewOptAccountDetails(v AccountDetails) OptAccountDetails {
 	return OptAccountDetails{
@@ -496,6 +501,7 @@ func (s *Payment) SetUpdatedAt(val OptDateTime) {
 	s.UpdatedAt = val
 }
 
+func (*Payment) getPaymentRes()   {}
 func (*Payment) patchPaymentRes() {}
 func (*Payment) postPaymentRes()  {}
 

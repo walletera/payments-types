@@ -11,7 +11,42 @@ import (
     "github.com/walletera/payments-types/api"
 )
 
-func TestClient_PatchWithdrawal(t *testing.T) {
+func TestClient_GetPayment(t *testing.T) {
+    handlerMock := NewMockHandler(t)
+
+    paymentId, err := uuid.NewUUID()
+    require.NoError(t, err)
+
+    getPaymentParams := api.GetPaymentParams{PaymentId: paymentId}
+
+    handlerMock.EXPECT().
+        GetPayment(mock.Anything, getPaymentParams).
+        Return(&api.Payment{
+            ID: api.OptUUID{
+                Value: paymentId,
+                Set:   true,
+            },
+        }, nil)
+
+    paymentsServer, err := api.NewServer(handlerMock)
+    require.NoError(t, err)
+
+    ts := httptest.NewServer(paymentsServer)
+    defer ts.Close()
+
+    paymentsClient, err := api.NewClient(ts.URL)
+    require.NoError(t, err)
+
+    resp, err := paymentsClient.GetPayment(context.Background(), getPaymentParams)
+    require.NoError(t, err)
+
+    payment, ok := resp.(*api.Payment)
+    require.True(t, ok)
+
+    require.Equal(t, paymentId, payment.ID.Value)
+}
+
+func TestClient_PatchPayment(t *testing.T) {
     handlerMock := NewMockHandler(t)
 
     paymentId, err := uuid.NewUUID()
@@ -50,7 +85,7 @@ func TestClient_PatchWithdrawal(t *testing.T) {
     require.NoError(t, err)
 }
 
-func TestClient_PostDeposit(t *testing.T) {
+func TestClient_PostPayment(t *testing.T) {
     handlerMock := NewMockHandler(t)
 
     depositlId, err := uuid.NewUUID()

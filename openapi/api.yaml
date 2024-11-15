@@ -5,6 +5,26 @@ info:
   version: "1.0.0"
 paths:
   /payments/{paymentId}:
+    get:
+      description: "Gets an individual payment"
+      operationId: "getPayment"
+      parameters:
+        - name: "paymentId"
+          in: "path"
+          description: "Payment Id"
+          required: true
+          schema:
+            type: "string"
+            format: "uuid"
+      responses:
+        "200":
+          description: "Payment found"
+          content:
+            application/json:
+              schema:
+                $ref: "schemas.yaml#/components/schemas/payment"
+        "404":
+          description: "Payment not found"
     patch:
       summary: "Patches an outbound payment"
       operationId: "patchPayment"

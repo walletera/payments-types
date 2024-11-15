@@ -23,6 +23,65 @@ func (_m *MockHandler) EXPECT() *MockHandler_Expecter {
 	return &MockHandler_Expecter{mock: &_m.Mock}
 }
 
+// GetPayment provides a mock function with given fields: ctx, params
+func (_m *MockHandler) GetPayment(ctx context.Context, params api.GetPaymentParams) (api.GetPaymentRes, error) {
+	ret := _m.Called(ctx, params)
+
+	if len(ret) == 0 {
+		panic("no return value specified for GetPayment")
+	}
+
+	var r0 api.GetPaymentRes
+	var r1 error
+	if rf, ok := ret.Get(0).(func(context.Context, api.GetPaymentParams) (api.GetPaymentRes, error)); ok {
+		return rf(ctx, params)
+	}
+	if rf, ok := ret.Get(0).(func(context.Context, api.GetPaymentParams) api.GetPaymentRes); ok {
+		r0 = rf(ctx, params)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(api.GetPaymentRes)
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func(context.Context, api.GetPaymentParams) error); ok {
+		r1 = rf(ctx, params)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// MockHandler_GetPayment_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetPayment'
+type MockHandler_GetPayment_Call struct {
+	*mock.Call
+}
+
+// GetPayment is a helper method to define mock.On call
+//   - ctx context.Context
+//   - params api.GetPaymentParams
+func (_e *MockHandler_Expecter) GetPayment(ctx interface{}, params interface{}) *MockHandler_GetPayment_Call {
+	return &MockHandler_GetPayment_Call{Call: _e.mock.On("GetPayment", ctx, params)}
+}
+
+func (_c *MockHandler_GetPayment_Call) Run(run func(ctx context.Context, params api.GetPaymentParams)) *MockHandler_GetPayment_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run(args[0].(context.Context), args[1].(api.GetPaymentParams))
+	})
+	return _c
+}
+
+func (_c *MockHandler_GetPayment_Call) Return(_a0 api.GetPaymentRes, _a1 error) *MockHandler_GetPayment_Call {
+	_c.Call.Return(_a0, _a1)
+	return _c
+}
+
+func (_c *MockHandler_GetPayment_Call) RunAndReturn(run func(context.Context, api.GetPaymentParams) (api.GetPaymentRes, error)) *MockHandler_GetPayment_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
 // PatchPayment provides a mock function with given fields: ctx, req, params
 func (_m *MockHandler) PatchPayment(ctx context.Context, req *api.PaymentUpdate, params api.PatchPaymentParams) (api.PatchPaymentRes, error) {
 	ret := _m.Called(ctx, req, params)
