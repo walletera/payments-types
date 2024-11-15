@@ -60,6 +60,10 @@ paths:
       responses:
         "201":
           description: "Payment successfully created"
+          content:
+            application/json:
+              schema:
+                $ref: "schemas.yaml#/components/schemas/payment"
         "400":
           description: "The provided parameters are incorrect"
           content:

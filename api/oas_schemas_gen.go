@@ -497,6 +497,7 @@ func (s *Payment) SetUpdatedAt(val OptDateTime) {
 }
 
 func (*Payment) patchPaymentRes() {}
+func (*Payment) postPaymentRes()  {}
 
 type PaymentDirection string
 
@@ -635,11 +636,6 @@ func (s *PaymentUpdate) SetExternalId(val OptUUID) {
 func (s *PaymentUpdate) SetStatus(val PaymentStatus) {
 	s.Status = val
 }
-
-// PostPaymentCreated is response for PostPayment operation.
-type PostPaymentCreated struct{}
-
-func (*PostPaymentCreated) postPaymentRes() {}
 
 // PostPaymentInternalServerError is response for PostPayment operation.
 type PostPaymentInternalServerError struct{}

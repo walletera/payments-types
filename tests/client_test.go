@@ -85,7 +85,7 @@ func TestClient_PostDeposit(t *testing.T) {
 
     handlerMock.EXPECT().
         PostPayment(mock.Anything, payment, postParams).
-        Return(&api.PostPaymentCreated{}, nil)
+        Return(payment, nil)
 
     paymentsServer, err := api.NewServer(handlerMock)
     require.NoError(t, err)
@@ -96,7 +96,9 @@ func TestClient_PostDeposit(t *testing.T) {
     paymentsClient, err := api.NewClient(ts.URL)
     require.NoError(t, err)
 
-    _, err = paymentsClient.PostPayment(context.Background(), payment, postParams)
-
+    resp, err := paymentsClient.PostPayment(context.Background(), payment, postParams)
     require.NoError(t, err)
+
+    _, ok := resp.(*api.Payment)
+    require.True(t, ok)
 }
