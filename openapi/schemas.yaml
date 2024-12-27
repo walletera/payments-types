@@ -45,6 +45,7 @@ components:
           type: "string"
           format: "date-time"
       required:
+        - "id"
         - "amount"
         - "currency"
 
@@ -90,6 +91,6 @@ components:
       enum: [ "pending", "delivered", "confirmed", "failed" ]
 
     errorMessage:
-      type: "string"
+      type: "object"
       maxLength: 256
       description: "A text message describing an error"

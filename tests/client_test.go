@@ -22,10 +22,7 @@ func TestClient_GetPayment(t *testing.T) {
     handlerMock.EXPECT().
         GetPayment(mock.Anything, getPaymentParams).
         Return(&api.Payment{
-            ID: api.OptUUID{
-                Value: paymentId,
-                Set:   true,
-            },
+            ID: paymentId,
         }, nil)
 
     paymentsServer, err := api.NewServer(handlerMock)
@@ -43,7 +40,7 @@ func TestClient_GetPayment(t *testing.T) {
     payment, ok := resp.(*api.Payment)
     require.True(t, ok)
 
-    require.Equal(t, paymentId, payment.ID.Value)
+    require.Equal(t, paymentId, payment.ID)
 }
 
 func TestClient_PatchPayment(t *testing.T) {
@@ -88,7 +85,7 @@ func TestClient_PatchPayment(t *testing.T) {
 func TestClient_PostPayment(t *testing.T) {
     handlerMock := NewMockHandler(t)
 
-    depositlId, err := uuid.NewUUID()
+    paymentId, err := uuid.NewUUID()
     require.NoError(t, err)
 
     customerId, err := uuid.NewUUID()
@@ -98,7 +95,7 @@ func TestClient_PostPayment(t *testing.T) {
     require.NoError(t, err)
 
     payment := &api.Payment{
-        ID:       api.NewOptUUID(depositlId),
+        ID:       paymentId,
         Amount:   100,
         Currency: "usd",
         CustomerId: api.OptUUID{

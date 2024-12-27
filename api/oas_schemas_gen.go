@@ -83,7 +83,6 @@ func (s *AccountDetails) SetRoutingKey(val OptString) {
 type ErrorMessage string
 
 func (*ErrorMessage) patchPaymentRes() {}
-func (*ErrorMessage) postPaymentRes()  {}
 
 // GetPaymentInternalServerError is response for GetPayment operation.
 type GetPaymentInternalServerError struct{}
@@ -385,7 +384,7 @@ func (*PatchPaymentOK) patchPaymentRes() {}
 // Ref: #/components/schemas/payment
 type Payment struct {
 	// Payment id.
-	ID OptUUID `json:"id"`
+	ID uuid.UUID `json:"id"`
 	// Payment amount.
 	Amount float64 `json:"amount"`
 	// Payment currency.
@@ -403,7 +402,7 @@ type Payment struct {
 }
 
 // GetID returns the value of ID.
-func (s *Payment) GetID() OptUUID {
+func (s *Payment) GetID() uuid.UUID {
 	return s.ID
 }
 
@@ -458,7 +457,7 @@ func (s *Payment) GetUpdatedAt() OptDateTime {
 }
 
 // SetID sets the value of ID.
-func (s *Payment) SetID(val OptUUID) {
+func (s *Payment) SetID(val uuid.UUID) {
 	s.ID = val
 }
 
@@ -652,6 +651,14 @@ func (s *PaymentUpdate) SetExternalId(val OptUUID) {
 func (s *PaymentUpdate) SetStatus(val PaymentStatus) {
 	s.Status = val
 }
+
+type PostPaymentBadRequest ErrorMessage
+
+func (*PostPaymentBadRequest) postPaymentRes() {}
+
+type PostPaymentConflict ErrorMessage
+
+func (*PostPaymentConflict) postPaymentRes() {}
 
 // PostPaymentInternalServerError is response for PostPayment operation.
 type PostPaymentInternalServerError struct{}

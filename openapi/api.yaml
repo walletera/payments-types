@@ -94,5 +94,11 @@ paths:
             application/json:
               schema:
                 $ref: "schemas.yaml#/components/schemas/errorMessage"
+        "409":
+          description: "The payment already exist"
+          content:
+            application/json:
+              schema:
+                $ref: "schemas.yaml#/components/schemas/errorMessage"
         "500":
           description: "Internal error"
