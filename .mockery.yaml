@@ -7,3 +7,9 @@ packages:
         Handler:
           config:
             with-expecter: true
+        SecurityHandler:
+          config:
+            with-expecter: true
+        SecuritySource:
+          config:
+            with-expecter: true

@@ -80,6 +80,20 @@ func (s *AccountDetails) SetRoutingKey(val OptString) {
 	s.RoutingKey = val
 }
 
+type BearerAuth struct {
+	Token string
+}
+
+// GetToken returns the value of Token.
+func (s *BearerAuth) GetToken() string {
+	return s.Token
+}
+
+// SetToken sets the value of Token.
+func (s *BearerAuth) SetToken(val string) {
+	s.Token = val
+}
+
 type ErrorMessage string
 
 func (*ErrorMessage) patchPaymentRes() {}

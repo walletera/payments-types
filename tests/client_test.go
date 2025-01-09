@@ -6,32 +6,55 @@ import (
     "testing"
 
     "github.com/google/uuid"
+    "github.com/stretchr/testify/assert"
     "github.com/stretchr/testify/mock"
     "github.com/stretchr/testify/require"
     "github.com/walletera/payments-types/api"
 )
 
 func TestClient_GetPayment(t *testing.T) {
-    handlerMock := NewMockHandler(t)
 
     paymentId, err := uuid.NewUUID()
     require.NoError(t, err)
 
     getPaymentParams := api.GetPaymentParams{PaymentId: paymentId}
 
+    handlerMock := NewMockHandler(t)
     handlerMock.EXPECT().
         GetPayment(mock.Anything, getPaymentParams).
         Return(&api.Payment{
             ID: paymentId,
         }, nil)
 
-    paymentsServer, err := api.NewServer(handlerMock)
+    bearerAuth := api.BearerAuth{Token: "json.web.token"}
+
+    securityHandlerMock := NewMockSecurityHandler(t)
+    securityHandlerMock.EXPECT().
+        HandleBearerAuth(
+            mock.Anything,
+            mock.Anything,
+            mock.Anything,
+        ).
+        Return(context.Background(), nil).
+        Run(func(ctx context.Context, operationName string, bearer api.BearerAuth) {
+            assert.Equal(t, bearerAuth, bearer)
+        })
+
+    paymentsServer, err := api.NewServer(handlerMock, securityHandlerMock)
     require.NoError(t, err)
 
     ts := httptest.NewServer(paymentsServer)
     defer ts.Close()
 
-    paymentsClient, err := api.NewClient(ts.URL)
+    securitySourceMock := NewMockSecuritySource(t)
+    securitySourceMock.EXPECT().
+        BearerAuth(mock.Anything, mock.Anything).
+        Return(
+            bearerAuth,
+            nil,
+        )
+
+    paymentsClient, err := api.NewClient(ts.URL, securitySourceMock)
     require.NoError(t, err)
 
     resp, err := paymentsClient.GetPayment(context.Background(), getPaymentParams)
@@ -44,8 +67,6 @@ func TestClient_GetPayment(t *testing.T) {
 }
 
 func TestClient_PatchPayment(t *testing.T) {
-    handlerMock := NewMockHandler(t)
-
     paymentId, err := uuid.NewUUID()
     require.NoError(t, err)
 
@@ -64,17 +85,40 @@ func TestClient_PatchPayment(t *testing.T) {
         PaymentId: paymentId,
     }
 
+    handlerMock := NewMockHandler(t)
     handlerMock.EXPECT().
         PatchPayment(mock.Anything, paymentPatchBody, patchWithdrawalParams).
         Return(&api.PatchPaymentOK{}, nil)
 
-    paymentsServer, err := api.NewServer(handlerMock)
+    bearerAuth := api.BearerAuth{Token: "json.web.token"}
+
+    securityHandlerMock := NewMockSecurityHandler(t)
+    securityHandlerMock.EXPECT().
+        HandleBearerAuth(
+            mock.Anything,
+            mock.Anything,
+            mock.Anything,
+        ).
+        Return(context.Background(), nil).
+        Run(func(ctx context.Context, operationName string, bearer api.BearerAuth) {
+            assert.Equal(t, bearerAuth, bearer)
+        })
+
+    paymentsServer, err := api.NewServer(handlerMock, securityHandlerMock)
     require.NoError(t, err)
 
     ts := httptest.NewServer(paymentsServer)
     defer ts.Close()
 
-    paymentsClient, err := api.NewClient(ts.URL)
+    securitySourceMock := NewMockSecuritySource(t)
+    securitySourceMock.EXPECT().
+        BearerAuth(mock.Anything, mock.Anything).
+        Return(
+            bearerAuth,
+            nil,
+        )
+
+    paymentsClient, err := api.NewClient(ts.URL, securitySourceMock)
     require.NoError(t, err)
 
     _, err = paymentsClient.PatchPayment(context.Background(), paymentPatchBody, patchWithdrawalParams)
@@ -83,8 +127,6 @@ func TestClient_PatchPayment(t *testing.T) {
 }
 
 func TestClient_PostPayment(t *testing.T) {
-    handlerMock := NewMockHandler(t)
-
     paymentId, err := uuid.NewUUID()
     require.NoError(t, err)
 
@@ -115,17 +157,40 @@ func TestClient_PostPayment(t *testing.T) {
         XWalleteraCorrelationID: api.NewOptUUID(correlationID),
     }
 
+    handlerMock := NewMockHandler(t)
     handlerMock.EXPECT().
         PostPayment(mock.Anything, payment, postParams).
         Return(payment, nil)
 
-    paymentsServer, err := api.NewServer(handlerMock)
+    bearerAuth := api.BearerAuth{Token: "json.web.token"}
+
+    securityHandlerMock := NewMockSecurityHandler(t)
+    securityHandlerMock.EXPECT().
+        HandleBearerAuth(
+            mock.Anything,
+            mock.Anything,
+            mock.Anything,
+        ).
+        Return(context.Background(), nil).
+        Run(func(ctx context.Context, operationName string, bearer api.BearerAuth) {
+            assert.Equal(t, bearerAuth, bearer)
+        })
+
+    paymentsServer, err := api.NewServer(handlerMock, securityHandlerMock)
     require.NoError(t, err)
 
     ts := httptest.NewServer(paymentsServer)
     defer ts.Close()
 
-    paymentsClient, err := api.NewClient(ts.URL)
+    securitySourceMock := NewMockSecuritySource(t)
+    securitySourceMock.EXPECT().
+        BearerAuth(mock.Anything, mock.Anything).
+        Return(
+            bearerAuth,
+            nil,
+        )
+
+    paymentsClient, err := api.NewClient(ts.URL, securitySourceMock)
     require.NoError(t, err)
 
     resp, err := paymentsClient.PostPayment(context.Background(), payment, postParams)

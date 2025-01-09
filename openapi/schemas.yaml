@@ -1,8 +1,8 @@
 openapi: "3.0.0"
 
 components:
-  schemas:
 
+  schemas:
     payment:
       type: "object"
       description: "Payment type"
@@ -91,6 +91,6 @@ components:
       enum: [ "pending", "delivered", "confirmed", "failed" ]
 
     errorMessage:
-      type: "object"
+      type: "string"
       maxLength: 256
       description: "A text message describing an error"

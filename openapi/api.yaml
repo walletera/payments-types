@@ -1,8 +1,21 @@
 openapi: "3.0.0"
+
 info:
   title: "Payments API"
   description: "API to create withdrawals and deposits on the payments service"
   version: "1.0.0"
+
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT # optional, arbitrary value for documentation purposes
+
+security:
+  - bearerAuth: []
+
 paths:
   /payments/{paymentId}:
     get:
