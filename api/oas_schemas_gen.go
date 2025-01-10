@@ -108,6 +108,11 @@ type GetPaymentNotFound struct{}
 
 func (*GetPaymentNotFound) getPaymentRes() {}
 
+// GetPaymentUnauthorized is response for GetPayment operation.
+type GetPaymentUnauthorized struct{}
+
+func (*GetPaymentUnauthorized) getPaymentRes() {}
+
 // NewOptAccountDetails returns new OptAccountDetails with value set to v.
 func NewOptAccountDetails(v AccountDetails) OptAccountDetails {
 	return OptAccountDetails{
@@ -394,6 +399,11 @@ type PatchPaymentOK struct{}
 
 func (*PatchPaymentOK) patchPaymentRes() {}
 
+// PatchPaymentUnauthorized is response for PatchPayment operation.
+type PatchPaymentUnauthorized struct{}
+
+func (*PatchPaymentUnauthorized) patchPaymentRes() {}
+
 // Payment type.
 // Ref: #/components/schemas/payment
 type Payment struct {
@@ -678,3 +688,8 @@ func (*PostPaymentConflict) postPaymentRes() {}
 type PostPaymentInternalServerError struct{}
 
 func (*PostPaymentInternalServerError) postPaymentRes() {}
+
+// PostPaymentUnauthorized is response for PostPayment operation.
+type PostPaymentUnauthorized struct{}
+
+func (*PostPaymentUnauthorized) postPaymentRes() {}
