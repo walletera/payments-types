@@ -20,23 +20,22 @@ components:
           description: "Payment currency"
         direction:
           type: "string"
-          enum: ["inbound", "outbound"]
+          enum: [ "inbound", "outbound" ]
         customerId:
           type: "string"
           format: "uuid"
           description: "The customer that sent or received the payment"
         externalId:
           type: "string"
-          format: "uuid"
           description: "Id assigned to the operation by an external payment provider"
+        schemeId:
+          type: "string"
+          description: "Id assigned to the operation by the payment scheme or clearing institution"
         beneficiary:
-          type: "object"
           $ref: "#/components/schemas/accountDetails"
         debtor:
-          type: "object"
           $ref: "#/components/schemas/accountDetails"
         status:
-          type: "string"
           $ref: "#/components/schemas/paymentStatus"
         createdAt:
           type: "string"
@@ -53,18 +52,49 @@ components:
       type: "object"
       description: "bank account details"
       properties:
-        bankName:
+        institutionName:
           type: string
-        bankId:
+        institutionId:
           type: string
+        currency:
+          type: string
+        accountType:
+          type: string
+          enum:
+            - cvu
+            - dinopay
+        accountDetails:
+          description: "Extra account details. The details depend on the accountType."
+          type: object
+          oneOf:
+            - $ref: "#/components/schemas/cvuAccountDetails"
+            - $ref: "#/components/schemas/dinopayAccountDetails"
+
+    cvuAccountDetails:
+      type: object
+      properties:
+        cuit:
+          description: "Account owner national identification number"
+          type: string
+          pattern: '^\d{11}$'
+        cvu:
+          type: string
+          pattern: '^\d{22}$'
+        alias:
+          type: string
+
+    dinopayAccountDetails:
+      type: object
+      properties:
         accountHolder:
-          type: string
+          type: "string"
+          description: "Name of the owner of the account"
         accountNumber:
-          type: string
-        accountNumberType:
-          type: string
-        routingKey:
-          type: string
+          type: "string"
+          description: "Account number on DinoPay"
+      required:
+        - "accountHolder"
+        - "accountNumber"
 
     paymentUpdate:
       type: "object"
@@ -76,7 +106,6 @@ components:
           description: "Payment Id"
         externalId:
           type: "string"
-          format: "uuid"
           description: "Id assigned to the operation by the external payment provider"
         status:
           type: "string"
@@ -88,9 +117,19 @@ components:
 
     paymentStatus:
       type: string
-      enum: [ "pending", "delivered", "confirmed", "failed" ]
+      enum: [ "pending", "delivered", "confirmed", "failed", "rejected" ]
 
-    errorMessage:
-      type: "string"
-      maxLength: 256
-      description: "A text message describing an error"
+    apiError:
+      type: "object"
+      description: "Body of the error responses"
+      properties:
+        errorMessage:
+          type: "string"
+          description: "A message describing the error"
+        errorCode:
+          type: "string"
+          format: "uuid"
+          description: "A unique identifier for the specific error"
+      required:
+        - "errorMessage"
+        - "errorCode"

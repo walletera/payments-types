@@ -8,18 +8,162 @@ import (
 	"github.com/ogen-go/ogen/validate"
 )
 
-func (s ErrorMessage) Validate() error {
-	alias := (string)(s)
-	if err := (validate.String{
-		MinLength:    0,
-		MinLengthSet: false,
-		MaxLength:    256,
-		MaxLengthSet: true,
-		Email:        false,
-		Hostname:     false,
-		Regex:        nil,
-	}).Validate(string(alias)); err != nil {
-		return errors.Wrap(err, "string")
+func (s *AccountDetails) Validate() error {
+	if s == nil {
+		return validate.ErrNilPointer
+	}
+
+	var failures []validate.FieldError
+	if err := func() error {
+		if value, ok := s.AccountType.Get(); ok {
+			if err := func() error {
+				if err := value.Validate(); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return err
+			}
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "accountType",
+			Error: err,
+		})
+	}
+	if err := func() error {
+		if value, ok := s.AccountDetails.Get(); ok {
+			if err := func() error {
+				if err := value.Validate(); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return err
+			}
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "accountDetails",
+			Error: err,
+		})
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+	return nil
+}
+
+func (s *AccountDetailsAccountDetails) Validate() error {
+	if s == nil {
+		return validate.ErrNilPointer
+	}
+
+	var failures []validate.FieldError
+	if err := func() error {
+		if err := s.OneOf.Validate(); err != nil {
+			return err
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "OneOf",
+			Error: err,
+		})
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
+	}
+	return nil
+}
+
+func (s AccountDetailsAccountDetailsSum) Validate() error {
+	switch s.Type {
+	case CvuAccountDetailsAccountDetailsAccountDetailsSum:
+		if err := s.CvuAccountDetails.Validate(); err != nil {
+			return err
+		}
+		return nil
+	case DinopayAccountDetailsAccountDetailsAccountDetailsSum:
+		return nil // no validation needed
+	default:
+		return errors.Errorf("invalid type %q", s.Type)
+	}
+}
+
+func (s AccountDetailsAccountType) Validate() error {
+	switch s {
+	case "cvu":
+		return nil
+	case "dinopay":
+		return nil
+	default:
+		return errors.Errorf("invalid value: %v", s)
+	}
+}
+
+func (s *CvuAccountDetails) Validate() error {
+	if s == nil {
+		return validate.ErrNilPointer
+	}
+
+	var failures []validate.FieldError
+	if err := func() error {
+		if value, ok := s.Cuit.Get(); ok {
+			if err := func() error {
+				if err := (validate.String{
+					MinLength:    0,
+					MinLengthSet: false,
+					MaxLength:    0,
+					MaxLengthSet: false,
+					Email:        false,
+					Hostname:     false,
+					Regex:        regexMap["^\\d{11}$"],
+				}).Validate(string(value)); err != nil {
+					return errors.Wrap(err, "string")
+				}
+				return nil
+			}(); err != nil {
+				return err
+			}
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "cuit",
+			Error: err,
+		})
+	}
+	if err := func() error {
+		if value, ok := s.Cvu.Get(); ok {
+			if err := func() error {
+				if err := (validate.String{
+					MinLength:    0,
+					MinLengthSet: false,
+					MaxLength:    0,
+					MaxLengthSet: false,
+					Email:        false,
+					Hostname:     false,
+					Regex:        regexMap["^\\d{22}$"],
+				}).Validate(string(value)); err != nil {
+					return errors.Wrap(err, "string")
+				}
+				return nil
+			}(); err != nil {
+				return err
+			}
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "cvu",
+			Error: err,
+		})
+	}
+	if len(failures) > 0 {
+		return &validate.Error{Fields: failures}
 	}
 	return nil
 }
@@ -56,6 +200,42 @@ func (s *Payment) Validate() error {
 	}(); err != nil {
 		failures = append(failures, validate.FieldError{
 			Name:  "direction",
+			Error: err,
+		})
+	}
+	if err := func() error {
+		if value, ok := s.Beneficiary.Get(); ok {
+			if err := func() error {
+				if err := value.Validate(); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return err
+			}
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "beneficiary",
+			Error: err,
+		})
+	}
+	if err := func() error {
+		if value, ok := s.Debtor.Get(); ok {
+			if err := func() error {
+				if err := value.Validate(); err != nil {
+					return err
+				}
+				return nil
+			}(); err != nil {
+				return err
+			}
+		}
+		return nil
+	}(); err != nil {
+		failures = append(failures, validate.FieldError{
+			Name:  "debtor",
 			Error: err,
 		})
 	}
@@ -104,6 +284,8 @@ func (s PaymentStatus) Validate() error {
 		return nil
 	case "failed":
 		return nil
+	case "rejected":
+		return nil
 	default:
 		return errors.Errorf("invalid value: %v", s)
 	}
@@ -128,22 +310,6 @@ func (s *PaymentUpdate) Validate() error {
 	}
 	if len(failures) > 0 {
 		return &validate.Error{Fields: failures}
-	}
-	return nil
-}
-
-func (s PostPaymentBadRequest) Validate() error {
-	alias := (ErrorMessage)(s)
-	if err := alias.Validate(); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (s PostPaymentConflict) Validate() error {
-	alias := (ErrorMessage)(s)
-	if err := alias.Validate(); err != nil {
-		return err
 	}
 	return nil
 }

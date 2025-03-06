@@ -74,11 +74,19 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "schemas.yaml#/components/schemas/errorMessage"
+                $ref: "schemas.yaml#/components/schemas/apiError"
         "401":
           description: "Unauthorized"
+          content:
+            application/json:
+              schema:
+                $ref: "schemas.yaml#/components/schemas/apiError"
         "500":
           description: "Internal error"
+          content:
+            application/json:
+              schema:
+                $ref: "schemas.yaml#/components/schemas/apiError"
 
   /payments:
     post:
@@ -110,14 +118,22 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "schemas.yaml#/components/schemas/errorMessage"
+                $ref: "schemas.yaml#/components/schemas/apiError"
         "401":
           description: "Unauthorized"
+          content:
+            application/json:
+              schema:
+                $ref: "schemas.yaml#/components/schemas/apiError"
         "409":
           description: "The payment already exist"
           content:
             application/json:
               schema:
-                $ref: "schemas.yaml#/components/schemas/errorMessage"
+                $ref: "schemas.yaml#/components/schemas/apiError"
         "500":
           description: "Internal error"
+          content:
+            application/json:
+              schema:
+                $ref: "schemas.yaml#/components/schemas/apiError"

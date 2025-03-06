@@ -74,8 +74,8 @@ func TestClient_PatchPayment(t *testing.T) {
     require.NoError(t, err)
 
     paymentPatchBody := &api.PaymentUpdate{
-        ExternalId: api.OptUUID{
-            Value: externalId,
+        ExternalId: api.OptString{
+            Value: externalId.String(),
             Set:   true,
         },
         Status: api.PaymentStatusConfirmed,
@@ -144,8 +144,8 @@ func TestClient_PostPayment(t *testing.T) {
             Value: customerId,
             Set:   true,
         },
-        ExternalId: api.OptUUID{
-            Value: externalId,
+        ExternalId: api.OptString{
+            Value: externalId.String(),
             Set:   true,
         },
     }
