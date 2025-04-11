@@ -699,7 +699,8 @@ type PatchPaymentOK struct{}
 
 func (*PatchPaymentOK) patchPaymentRes() {}
 
-type PatchPaymentUnauthorized ApiError
+// PatchPaymentUnauthorized is response for PatchPayment operation.
+type PatchPaymentUnauthorized struct{}
 
 func (*PatchPaymentUnauthorized) patchPaymentRes() {}
 
@@ -1006,6 +1007,7 @@ type PostPaymentInternalServerError ApiError
 
 func (*PostPaymentInternalServerError) postPaymentRes() {}
 
-type PostPaymentUnauthorized ApiError
+// PostPaymentUnauthorized is response for PostPayment operation.
+type PostPaymentUnauthorized struct{}
 
 func (*PostPaymentUnauthorized) postPaymentRes() {}

@@ -133,3 +133,11 @@ components:
       required:
         - "errorMessage"
         - "errorCode"
+
+    apiUnauthorizedError:
+      type: "object"
+      description: "Body of the unauthorized error response"
+      properties:
+        error_message:
+          type: "string"
+          description: "A message describing the error"

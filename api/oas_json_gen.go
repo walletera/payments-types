@@ -1014,44 +1014,6 @@ func (s *PatchPaymentInternalServerError) UnmarshalJSON(data []byte) error {
 	return s.Decode(d)
 }
 
-// Encode encodes PatchPaymentUnauthorized as json.
-func (s *PatchPaymentUnauthorized) Encode(e *jx.Encoder) {
-	unwrapped := (*ApiError)(s)
-
-	unwrapped.Encode(e)
-}
-
-// Decode decodes PatchPaymentUnauthorized from json.
-func (s *PatchPaymentUnauthorized) Decode(d *jx.Decoder) error {
-	if s == nil {
-		return errors.New("invalid: unable to decode PatchPaymentUnauthorized to nil")
-	}
-	var unwrapped ApiError
-	if err := func() error {
-		if err := unwrapped.Decode(d); err != nil {
-			return err
-		}
-		return nil
-	}(); err != nil {
-		return errors.Wrap(err, "alias")
-	}
-	*s = PatchPaymentUnauthorized(unwrapped)
-	return nil
-}
-
-// MarshalJSON implements stdjson.Marshaler.
-func (s *PatchPaymentUnauthorized) MarshalJSON() ([]byte, error) {
-	e := jx.Encoder{}
-	s.Encode(&e)
-	return e.Bytes(), nil
-}
-
-// UnmarshalJSON implements stdjson.Unmarshaler.
-func (s *PatchPaymentUnauthorized) UnmarshalJSON(data []byte) error {
-	d := jx.DecodeBytes(data)
-	return s.Decode(d)
-}
-
 // Encode implements json.Marshaler.
 func (s *Payment) Encode(e *jx.Encoder) {
 	e.ObjStart()
@@ -1660,44 +1622,6 @@ func (s *PostPaymentInternalServerError) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON implements stdjson.Unmarshaler.
 func (s *PostPaymentInternalServerError) UnmarshalJSON(data []byte) error {
-	d := jx.DecodeBytes(data)
-	return s.Decode(d)
-}
-
-// Encode encodes PostPaymentUnauthorized as json.
-func (s *PostPaymentUnauthorized) Encode(e *jx.Encoder) {
-	unwrapped := (*ApiError)(s)
-
-	unwrapped.Encode(e)
-}
-
-// Decode decodes PostPaymentUnauthorized from json.
-func (s *PostPaymentUnauthorized) Decode(d *jx.Decoder) error {
-	if s == nil {
-		return errors.New("invalid: unable to decode PostPaymentUnauthorized to nil")
-	}
-	var unwrapped ApiError
-	if err := func() error {
-		if err := unwrapped.Decode(d); err != nil {
-			return err
-		}
-		return nil
-	}(); err != nil {
-		return errors.Wrap(err, "alias")
-	}
-	*s = PostPaymentUnauthorized(unwrapped)
-	return nil
-}
-
-// MarshalJSON implements stdjson.Marshaler.
-func (s *PostPaymentUnauthorized) MarshalJSON() ([]byte, error) {
-	e := jx.Encoder{}
-	s.Encode(&e)
-	return e.Bytes(), nil
-}
-
-// UnmarshalJSON implements stdjson.Unmarshaler.
-func (s *PostPaymentUnauthorized) UnmarshalJSON(data []byte) error {
 	d := jx.DecodeBytes(data)
 	return s.Decode(d)
 }
