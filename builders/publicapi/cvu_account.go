@@ -1,4 +1,4 @@
-package public
+package publicapi
 
 import (
     "github.com/walletera/payments-types/publicapi"

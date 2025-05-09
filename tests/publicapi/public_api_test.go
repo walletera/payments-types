@@ -10,7 +10,7 @@ import (
     "github.com/stretchr/testify/assert"
     "github.com/stretchr/testify/mock"
     "github.com/stretchr/testify/require"
-    "github.com/walletera/payments-types/builders/public"
+    pubapiBuilder "github.com/walletera/payments-types/builders/publicapi"
     "github.com/walletera/payments-types/publicapi"
     "github.com/walletera/payments-types/tests/mocks"
 )
@@ -165,7 +165,7 @@ func TestPublicAPI_PostPayment(t *testing.T) {
 }
 
 func beneficiary() publicapi.Account {
-    account, err := public.NewCVUAccountBuilder().
+    account, err := pubapiBuilder.NewCVUAccountBuilder().
         WithCVU("2222222222222222222222").
         Build()
     if err != nil {
@@ -175,7 +175,7 @@ func beneficiary() publicapi.Account {
 }
 
 func debtor() publicapi.Account {
-    account, err := public.NewCVUAccountBuilder().
+    account, err := pubapiBuilder.NewCVUAccountBuilder().
         WithCVU("1111111111111111111111").
         Build()
     if err != nil {
