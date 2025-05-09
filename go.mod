@@ -9,7 +9,6 @@ require (
 	github.com/ogen-go/ogen v1.2.2
 	github.com/stretchr/testify v1.9.0
 	github.com/walletera/eventskit v0.0.0-20241220121922-5fc47ec05384
-	github.com/walletera/message-processor v0.0.7
 	github.com/walletera/werrors v0.0.3
 	go.opentelemetry.io/otel v1.29.0
 	go.opentelemetry.io/otel/metric v1.29.0

@@ -1,15 +1,21 @@
-dir: tests
-outpkg: tests
-filename: "mock_{{.InterfaceNameSnake}}.go"
+dir: tests/mocks
+outpkg: mocks
+mockname: "Mock{{.InterfaceNameSnake}}_{{.PackageName}}"
+filename: "mock_{{.InterfaceNameSnake}}_{{.PackageName}}.go"
 packages:
-  github.com/walletera/payments-types/api:
+  github.com/walletera/payments-types/privateapi:
     interfaces:
-        Handler:
-          config:
-            with-expecter: true
-        SecurityHandler:
-          config:
-            with-expecter: true
-        SecuritySource:
-          config:
-            with-expecter: true
+      Handler:
+        config:
+          with-expecter: true
+  github.com/walletera/payments-types/publicapi:
+    interfaces:
+      Handler:
+        config:
+          with-expecter: true
+      SecurityHandler:
+        config:
+          with-expecter: true
+      SecuritySource:
+        config:
+          with-expecter: true

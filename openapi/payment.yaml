@@ -1,0 +1,104 @@
+openapi: "3.0.0"
+
+components:
+
+  schemas:
+    paymentBasicAttributes:
+      type: "object"
+      description: "Payment basic attributes"
+      properties:
+        id:
+          type: "string"
+          format: "uuid"
+          description: "Payment id"
+        amount:
+          type: "number"
+          format: "double"
+          description: "Payment amount"
+        currency:
+          $ref: "currency.yaml#/components/schemas/currency"
+        gateway:
+          $ref: "#/components/schemas/gateway"
+        debtor:
+          $ref: "account.yaml#/components/schemas/account"
+        beneficiary:
+          $ref: "account.yaml#/components/schemas/account"
+      required:
+        - "id"
+        - "amount"
+        - "currency"
+        - "debtor"
+        - "beneficiary"
+        - "gateway"
+
+    paymentExtraAttributes:
+      type: "object"
+      description: "Payment extra attributes"
+      properties:
+        direction:
+          $ref: "#/components/schemas/direction"
+        customerId:
+          type: "string"
+          format: "uuid"
+          description: "The customer that sent or received the payment"
+        status:
+          $ref: "#/components/schemas/paymentStatus"
+        externalId:
+          type: "string"
+          description: "Id assigned to the operation by an external payment provider"
+        schemeId:
+          type: "string"
+          description: "Id assigned to the operation by the payment scheme or clearing institution"
+      required:
+        - "direction"
+        - "customerId"
+        - "status"
+
+    paymentPostCreationAttributes:
+      type: object
+      description: "Attributes set by payments service on the payment creation"
+      properties:
+        createdAt:
+          type: "string"
+          format: "date-time"
+        updatedAt:
+          type: "string"
+          format: "date-time"
+      required:
+        - "createdAt"
+        - "updatedAt"
+
+    payment:
+      allOf:
+        - $ref: "#/components/schemas/paymentBasicAttributes"
+        - $ref: "#/components/schemas/paymentExtraAttributes"
+        - $ref: "#/components/schemas/paymentPostCreationAttributes"
+
+    paymentUpdate:
+      type: "object"
+      description: "Body of the PATH /withdrawal request"
+      properties:
+        paymentId:
+          type: "string"
+          format: "uuid"
+          description: "Payment Id"
+        externalId:
+          type: "string"
+          description: "Id assigned to the operation by the external payment provider"
+        status:
+          $ref: "#/components/schemas/paymentStatus"
+      required:
+        - "paymentId"
+        - "status"
+
+    paymentStatus:
+      type: string
+      enum: [ "pending", "delivered", "confirmed", "failed", "rejected" ]
+
+    gateway:
+      type: "string"
+      enum: [ "bind", "dinopay" ]
+
+    direction:
+      type: "string"
+      enum: [ "inbound", "outbound" ]
