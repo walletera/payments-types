@@ -1,0 +1,18 @@
+openapi: "3.0.0"
+
+components:
+  schemas:
+
+    apiError:
+      type: "object"
+      description: "Body of the error responses"
+      properties:
+        errorMessage:
+          type: "string"
+          description: "A message describing the error"
+        errorCode:
+          type: "string"
+          description: "A code that identifies a specific type of error"
+      required:
+        - "errorMessage"
+        - "errorCode"

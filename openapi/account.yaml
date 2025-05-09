@@ -1,0 +1,92 @@
+openapi: "3.0.0"
+
+components:
+  schemas:
+
+    account:
+      type: "object"
+      description: "a financial account maintained by a bank or other financial institution"
+      properties:
+        institutionName:
+          type: string
+        institutionId:
+          type: string
+        currency:
+          $ref: "currency.yaml#/components/schemas/currency"
+        accountDetails:
+          description: "Extra account details. The details depend on the accountType."
+          type: object
+          oneOf:
+            - $ref: "#/components/schemas/cvuAccountDetails"
+            - $ref: "#/components/schemas/dinopayAccountDetails"
+          discriminator:
+            propertyName: accountType
+            mapping:
+              cvu: "#/components/schemas/cvuAccountDetails"
+              dinopay: "#/components/schemas/dinopayAccountDetails"
+      required:
+        - currency
+        - accountDetails
+
+    cvuAccountDetails:
+      type: object
+      properties:
+        accountType:
+          type: string
+        cuit:
+          description: "Account owner national identification number"
+          type: string
+          pattern: '^\d{11}$'
+        routingInfo:
+          type: object
+          oneOf:
+            - "$ref": "#/components/schemas/cvuCvuRoutingInfo"
+            - "$ref": "#/components/schemas/aliasCvuRoutingInfo"
+          discriminator:
+            propertyName: cvuRoutingInfoType
+            mapping:
+              cvu: "#/components/schemas/cvuCvuRoutingInfo"
+              alias: "#/components/schemas/aliasCvuRoutingInfo"
+      required:
+        - accountType
+        - routingInfo
+
+    cvuCvuRoutingInfo:
+      type: object
+      properties:
+        cvuRoutingInfoType:
+          type: string
+        cvu:
+          type: string
+          pattern: '^\d{22}$'
+      required:
+        - cvuRoutingInfoType
+        - cvu
+
+    aliasCvuRoutingInfo:
+      type: object
+      properties:
+        cvuRoutingInfoType:
+          type: string
+        alias:
+          type: string
+          pattern: '^[\w\.-]{6,20}$'
+      required:
+        - cvuRoutingInfoType
+        - alias
+
+    dinopayAccountDetails:
+      type: object
+      properties:
+        accountType:
+          type: string
+        accountHolder:
+          type: "string"
+          description: "Name of the owner of the account"
+        accountNumber:
+          type: "string"
+          description: "Account number on DinoPay"
+      required:
+        - accountType
+        - accountHolder
+        - accountNumber
