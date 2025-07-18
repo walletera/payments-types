@@ -44,7 +44,10 @@ func TestPublicAPI_GetPayment(t *testing.T) {
             UpdatedAt:   time.Time{},
         }, nil)
 
-    bearerAuth := publicapi.BearerAuth{Token: "json.web.token"}
+    bearerAuth := publicapi.BearerAuth{
+        Token: "json.web.token",
+        Roles: []string{},
+    }
 
     securityHandlerMock := mocks.NewMocksecurity_handler_publicapi(t)
     securityHandlerMock.EXPECT().
@@ -126,7 +129,10 @@ func TestPublicAPI_PostPayment(t *testing.T) {
             UpdatedAt:   time.Time{},
         }, nil)
 
-    bearerAuth := publicapi.BearerAuth{Token: "json.web.token"}
+    bearerAuth := publicapi.BearerAuth{
+        Token: "json.web.token",
+        Roles: []string{},
+    }
 
     securityHandlerMock := mocks.NewMocksecurity_handler_publicapi(t)
     securityHandlerMock.EXPECT().
