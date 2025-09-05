@@ -1,0 +1,44 @@
+{
+  "id": "3b3315ea-38c1-40a4-b7f9-149cc9807096",
+  "type": "PaymentCreated",
+  "aggregateVersion": 1,
+  "correlationId": "12345678-1234-1234-1234-123456789012",
+  "createdAt": "2021-01-01T00:00:00Z",
+  "data": {
+    "id": "3b3315ea-38c1-40a4-b7f9-149cc9807096",
+    "amount": 100,
+    "currency": "ARS",
+    "customerId": "997e76a7-c18d-4337-90ea-9a5cb0c5b54e",
+    "direction": "inbound",
+    "status": "confirmed",
+    "gateway": "dinopay",
+    "debtor": {
+      "institutionName": "dinopay",
+      "institutionId": "dinopay",
+      "currency": "ARS",
+      "accountDetails": {
+        "accountType": "cvu",
+        "cuit": "23679876453",
+        "routingInfo": {
+          "cvuRoutingInfoType": "cvu",
+          "cvu": "1122334455667788554433"
+        }
+      }
+    },
+    "beneficiary": {
+      "institutionName": "dinopay",
+      "institutionId": "dinopay",
+      "currency": "ARS",
+      "accountDetails": {
+        "accountType": "cvu",
+        "cuit": "23679876453",
+        "routingInfo": {
+          "cvuRoutingInfoType": "cvu",
+          "cvu": "1122334455667788554433"
+        }
+      }
+    },
+    "createdAt": "2021-01-01T00:00:00Z",
+    "updatedAt": "2021-01-01T00:00:00Z"
+  }
+}

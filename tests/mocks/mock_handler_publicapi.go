@@ -81,6 +81,65 @@ func (_c *Mockhandler_publicapi_GetPayment_Call) RunAndReturn(run func(context.C
 	return _c
 }
 
+// ListPayments provides a mock function with given fields: ctx, params
+func (_m *Mockhandler_publicapi) ListPayments(ctx context.Context, params publicapi.ListPaymentsParams) (publicapi.ListPaymentsRes, error) {
+	ret := _m.Called(ctx, params)
+
+	if len(ret) == 0 {
+		panic("no return value specified for ListPayments")
+	}
+
+	var r0 publicapi.ListPaymentsRes
+	var r1 error
+	if rf, ok := ret.Get(0).(func(context.Context, publicapi.ListPaymentsParams) (publicapi.ListPaymentsRes, error)); ok {
+		return rf(ctx, params)
+	}
+	if rf, ok := ret.Get(0).(func(context.Context, publicapi.ListPaymentsParams) publicapi.ListPaymentsRes); ok {
+		r0 = rf(ctx, params)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(publicapi.ListPaymentsRes)
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func(context.Context, publicapi.ListPaymentsParams) error); ok {
+		r1 = rf(ctx, params)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// Mockhandler_publicapi_ListPayments_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'ListPayments'
+type Mockhandler_publicapi_ListPayments_Call struct {
+	*mock.Call
+}
+
+// ListPayments is a helper method to define mock.On call
+//   - ctx context.Context
+//   - params publicapi.ListPaymentsParams
+func (_e *Mockhandler_publicapi_Expecter) ListPayments(ctx interface{}, params interface{}) *Mockhandler_publicapi_ListPayments_Call {
+	return &Mockhandler_publicapi_ListPayments_Call{Call: _e.mock.On("ListPayments", ctx, params)}
+}
+
+func (_c *Mockhandler_publicapi_ListPayments_Call) Run(run func(ctx context.Context, params publicapi.ListPaymentsParams)) *Mockhandler_publicapi_ListPayments_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run(args[0].(context.Context), args[1].(publicapi.ListPaymentsParams))
+	})
+	return _c
+}
+
+func (_c *Mockhandler_publicapi_ListPayments_Call) Return(_a0 publicapi.ListPaymentsRes, _a1 error) *Mockhandler_publicapi_ListPayments_Call {
+	_c.Call.Return(_a0, _a1)
+	return _c
+}
+
+func (_c *Mockhandler_publicapi_ListPayments_Call) RunAndReturn(run func(context.Context, publicapi.ListPaymentsParams) (publicapi.ListPaymentsRes, error)) *Mockhandler_publicapi_ListPayments_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
 // PostPayment provides a mock function with given fields: ctx, req, params
 func (_m *Mockhandler_publicapi) PostPayment(ctx context.Context, req *publicapi.PostPaymentReq, params publicapi.PostPaymentParams) (publicapi.PostPaymentRes, error) {
 	ret := _m.Called(ctx, req, params)
