@@ -13,7 +13,7 @@ import (
     "github.com/stretchr/testify/require"
 )
 
-func TestDeserializer_Deserialize(t *testing.T) {
+func TestDeserializer_DeserializePaymentCreated(t *testing.T) {
     logger := slog.New(slog.NewJSONHandler(new(bytes.Buffer), nil))
     deserializer := NewDeserializer(logger)
 
@@ -114,6 +114,76 @@ func TestDeserializer_Deserialize(t *testing.T) {
                 assert.False(t, paymentCreatedEvent.Data.Beneficiary.InstitutionName.IsSet(), "Beneficiary InstitutionName should not be set")
                 assert.False(t, paymentCreatedEvent.Data.Beneficiary.InstitutionId.IsSet(), "Beneficiary InstitutionId should not be set")
 
+            },
+        )
+
+        err = event.Accept(ctx, mockHandler)
+        require.NoError(t, err)
+
+        mock.AssertExpectationsForObjects(t, mockHandler)
+    })
+}
+
+func TestDeserializer_DeserializePaymentUpdated(t *testing.T) {
+    logger := slog.New(slog.NewJSONHandler(new(bytes.Buffer), nil))
+    deserializer := NewDeserializer(logger)
+
+    t.Run("PaymentUpdated with all fields completed", func(t *testing.T) {
+        jsonPayload, err := os.ReadFile("testdata/payment_updated_full.json")
+        require.NoError(t, err)
+
+        event, err := deserializer.Deserialize(jsonPayload)
+        require.NoError(t, err)
+
+        ctx := context.TODO()
+
+        mockHandler := NewMockHandler(t)
+        mockHandler.EXPECT().HandlePaymentUpdated(ctx, event).Return(nil).Run(
+            func(ctx context.Context, paymentUpdatedEvent PaymentUpdated) {
+                // Event fields
+                assert.Equal(t, "3b3315ea-38c1-40a4-b7f9-149cc9807096", paymentUpdatedEvent.Id.String())
+                assert.Equal(t, "PaymentUpdated", paymentUpdatedEvent.EventType)
+                assert.Equal(t, uint64(1), paymentUpdatedEvent.EventAggregateVersion)
+                assert.Equal(t, "12345678-1234-1234-1234-123456789012", paymentUpdatedEvent.EventCorrelationId)
+                assert.Equal(t, "2021-01-01T00:00:00Z", paymentUpdatedEvent.EventCreatedAt.Format(time.RFC3339))
+
+                // PaymentUpdate fields
+                assert.Equal(t, "3b3315ea-38c1-40a4-b7f9-149cc9807096", paymentUpdatedEvent.Data.PaymentId.String())
+                assert.Equal(t, "confirmed", string(paymentUpdatedEvent.Data.Status))
+                assert.True(t, paymentUpdatedEvent.Data.ExternalId.IsSet(), "ExternalId should be set")
+                assert.Equal(t, "ext-123456", paymentUpdatedEvent.Data.ExternalId.Value)
+            },
+        )
+
+        err = event.Accept(ctx, mockHandler)
+        require.NoError(t, err)
+
+        mock.AssertExpectationsForObjects(t, mockHandler)
+    })
+
+    t.Run("PaymentUpdated with optional fields empty", func(t *testing.T) {
+        jsonPayload, err := os.ReadFile("testdata/payment_updated_optional_empty.json")
+        require.NoError(t, err)
+
+        event, err := deserializer.Deserialize(jsonPayload)
+        require.NoError(t, err)
+
+        ctx := context.TODO()
+
+        mockHandler := NewMockHandler(t)
+        mockHandler.EXPECT().HandlePaymentUpdated(ctx, event).Return(nil).Run(
+            func(ctx context.Context, paymentUpdatedEvent PaymentUpdated) {
+                // Event fields
+                assert.Equal(t, "3b3315ea-38c1-40a4-b7f9-149cc9807096", paymentUpdatedEvent.Id.String())
+                assert.Equal(t, "PaymentUpdated", paymentUpdatedEvent.EventType)
+                assert.Equal(t, uint64(1), paymentUpdatedEvent.EventAggregateVersion)
+                assert.Equal(t, "12345678-1234-1234-1234-123456789012", paymentUpdatedEvent.EventCorrelationId)
+                assert.Equal(t, "2021-01-01T00:00:00Z", paymentUpdatedEvent.EventCreatedAt.Format(time.RFC3339))
+
+                // PaymentUpdate fields
+                assert.Equal(t, "3b3315ea-38c1-40a4-b7f9-149cc9807096", paymentUpdatedEvent.Data.PaymentId.String())
+                assert.Equal(t, "confirmed", string(paymentUpdatedEvent.Data.Status))
+                assert.False(t, paymentUpdatedEvent.Data.ExternalId.IsSet(), "ExternalId should not be set")
             },
         )
 

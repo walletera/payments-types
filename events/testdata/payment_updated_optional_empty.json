@@ -1,0 +1,11 @@
+{
+  "id": "3b3315ea-38c1-40a4-b7f9-149cc9807096",
+  "type": "PaymentUpdated",
+  "aggregateVersion": 1,
+  "correlationId": "12345678-1234-1234-1234-123456789012",
+  "createdAt": "2021-01-01T00:00:00Z",
+  "data": {
+    "paymentId": "3b3315ea-38c1-40a4-b7f9-149cc9807096",
+    "status": "confirmed"
+  }
+}
